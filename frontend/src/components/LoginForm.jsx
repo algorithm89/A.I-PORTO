@@ -20,7 +20,13 @@ function LoginForm({ onClose, onSwitchToRegister, onSuccess }) {
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify(form),
       })
-      const data = await res.json()
+      const text = await res.text()
+      let data
+      try { data = JSON.parse(text) } catch {
+        setStatus({ type: 'error', msg: `Server returned ${res.status} — please try again.` })
+        setLoading(false)
+        return
+      }
       if (res.ok) {
         localStorage.setItem('token', data.token)
         localStorage.setItem('username', form.username)

@@ -55,7 +55,9 @@ public class SecurityConfig {
                 "http://localhost:5173",
                 "http://localhost:3000",
                 "http://152.53.210.206:3000",
-                "http://152.53.210.206"
+                "http://152.53.210.206",
+                "https://bublikstudios.net",
+                "http://bublikstudios.net"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
