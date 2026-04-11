@@ -3,7 +3,7 @@
 set -e
 
 REPO="https://github.com/algorithm89/A.I-PORTO.git"
-APP_DIR="/opt/A.I-PORTO"
+APP_DIR="/home/bublik/A.I-PORTO"
 
 echo "🚀 BublikStudios AI-Backend — Production Deploy"
 echo "================================================"
@@ -32,6 +32,9 @@ echo "✅ .env file found — Docker Compose will read VAULT_TOKEN from it"
 # Build & start with production compose
 echo "🔨 Building Docker images..."
 docker compose -f docker-compose.prod.yml up --build -d
+
+echo "🧹 Cleaning up old images..."
+docker image prune -f
 
 echo ""
 echo "⏳ Waiting for containers to start..."
