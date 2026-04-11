@@ -1,0 +1,21 @@
+services:
+  vault:
+    image: hashicorp/vault:latest
+    container_name: bublik-vault
+    restart: unless-stopped
+    cap_add:
+      - IPC_LOCK
+    ports:
+      - "8200:8200"
+    environment:
+      VAULT_ADDR: http://127.0.0.1:8200
+    volumes:
+      - ./config:/vault/config:Z
+      - ./data:/vault/data:Z
+    command: vault server -config=/vault/config/vault.hcl
+    networks:
+      - bublik-network
+
+networks:
+  bublik-network:
+    name: bublik-network

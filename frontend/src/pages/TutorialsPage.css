@@ -1,0 +1,306 @@
+/* ══════════════════════════
+   TUTORIALS PAGE
+══════════════════════════ */
+.tut-page {
+  position: relative;
+  min-height: 100vh;
+}
+
+/* ── Hero ── */
+.tut-hero {
+  position: relative;
+  z-index: 1;
+  padding: 5rem 0 3.5rem;
+  text-align: center;
+}
+.tut-hero-title {
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 1.1;
+  color: var(--text-primary);
+  margin: 1rem 0 1.2rem;
+}
+.tut-hero-sub {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto 2.5rem;
+  line-height: 1.75;
+}
+
+/* Stats row */
+.tut-stats {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+}
+.tut-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+.tut-stat-num {
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 16px rgba(0,229,255,0.4);
+}
+.tut-stat-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ── Filters ── */
+.tut-filters {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin-bottom: 2.5rem;
+}
+.tut-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+.tut-filter-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  min-width: 60px;
+}
+.tut-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* shared filter-btn with BlogPage */
+.filter-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.38rem 1rem;
+  border-radius: 100px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s ease;
+}
+.filter-btn:hover {
+  border-color: rgba(0,229,255,0.4);
+  color: var(--neon-cyan);
+}
+.filter-active {
+  background: rgba(0,229,255,0.1);
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
+  box-shadow: 0 0 14px rgba(0,229,255,0.2);
+}
+
+/* ── Tutorials grid ── */
+.tut-grid-section {
+  position: relative;
+  z-index: 1;
+  padding-bottom: 4rem;
+}
+.tut-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.6rem;
+}
+
+/* ── Tutorial card ── */
+.tut-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 1.5rem 1.5rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.tut-card:hover { transform: translateY(-5px); }
+
+.tc-pink   { border: 1px solid rgba(255,45,120,0.25); }
+.tc-pink:hover   { box-shadow: 0 8px 40px rgba(255,45,120,0.18); }
+.tc-yellow { border: 1px solid rgba(255,230,0,0.22); }
+.tc-yellow:hover { box-shadow: 0 8px 40px rgba(255,230,0,0.15); }
+.tc-cyan   { border: 1px solid rgba(0,229,255,0.22); }
+.tc-cyan:hover   { box-shadow: 0 8px 40px rgba(0,229,255,0.18); }
+.tc-purple { border: 1px solid rgba(191,0,255,0.22); }
+.tc-purple:hover { box-shadow: 0 8px 40px rgba(191,0,255,0.18); }
+
+/* Card top row */
+.tc-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.tc-emoji { font-size: 2rem; }
+.tc-top-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+}
+
+.tc-track {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  padding: 0.18rem 0.65rem;
+  border-radius: 100px;
+}
+.tc-track-cyan   { background:rgba(0,229,255,0.1);  color:var(--neon-cyan);   border:1px solid rgba(0,229,255,0.25); }
+.tc-track-yellow { background:rgba(255,230,0,0.08); color:var(--neon-yellow); border:1px solid rgba(255,230,0,0.25); }
+.tc-track-pink   { background:rgba(255,45,120,0.1); color:var(--neon-pink);   border:1px solid rgba(255,45,120,0.25); }
+.tc-track-purple { background:rgba(191,0,255,0.08); color:#df7fff;            border:1px solid rgba(191,0,255,0.22); }
+
+.tc-level {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  padding: 0.14rem 0.55rem;
+  border-radius: 100px;
+}
+.tc-level-beginner     { background:rgba(57,255,20,0.08);  color:#39ff14; border:1px solid rgba(57,255,20,0.25); }
+.tc-level-intermediate { background:rgba(255,230,0,0.07);  color:var(--neon-yellow); border:1px solid rgba(255,230,0,0.22); }
+.tc-level-advanced     { background:rgba(255,45,120,0.08); color:var(--neon-pink);   border:1px solid rgba(255,45,120,0.22); }
+
+/* Title & excerpt */
+.tc-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.35;
+  letter-spacing: -0.2px;
+}
+.tc-excerpt {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.72;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Footer row */
+.tc-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: auto;
+}
+.tc-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+.tc-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.12rem 0.5rem;
+  border-radius: 100px;
+}
+.tc-tag-cyan   { background:rgba(0,229,255,0.07);  color:var(--neon-cyan);   border:1px solid rgba(0,229,255,0.2); }
+.tc-tag-yellow { background:rgba(255,230,0,0.06);  color:var(--neon-yellow); border:1px solid rgba(255,230,0,0.2); }
+.tc-tag-pink   { background:rgba(255,45,120,0.08); color:var(--neon-pink);   border:1px solid rgba(255,45,120,0.2); }
+.tc-tag-purple { background:rgba(191,0,255,0.07);  color:#df7fff;            border:1px solid rgba(191,0,255,0.2); }
+
+.tc-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.tc-duration {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.tc-btn {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 0.45rem 1rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+.tc-btn-cyan   { background:rgba(0,229,255,0.08);  color:var(--neon-cyan);   border:1px solid rgba(0,229,255,0.25); }
+.tc-btn-cyan:hover   { background:rgba(0,229,255,0.16); box-shadow:0 0 16px rgba(0,229,255,0.25); }
+.tc-btn-yellow { background:rgba(255,230,0,0.07);  color:var(--neon-yellow); border:1px solid rgba(255,230,0,0.22); }
+.tc-btn-yellow:hover { background:rgba(255,230,0,0.14); box-shadow:0 0 16px rgba(255,230,0,0.22); }
+.tc-btn-pink   { background:rgba(255,45,120,0.08); color:var(--neon-pink);   border:1px solid rgba(255,45,120,0.25); }
+.tc-btn-pink:hover   { background:rgba(255,45,120,0.16); box-shadow:0 0 16px rgba(255,45,120,0.25); }
+.tc-btn-purple { background:rgba(191,0,255,0.07);  color:#df7fff;            border:1px solid rgba(191,0,255,0.22); }
+.tc-btn-purple:hover { background:rgba(191,0,255,0.14); box-shadow:0 0 16px rgba(191,0,255,0.25); }
+
+/* Empty state */
+.tut-empty {
+  text-align: center;
+  padding: 5rem 0;
+  color: var(--text-muted);
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.tut-empty span { font-size: 3rem; }
+
+/* ── CTA strip ── */
+.tut-cta {
+  position: relative;
+  z-index: 1;
+  padding-bottom: 5rem;
+}
+.tut-cta-inner {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 2.5rem 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+.tut-cta-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+.tut-cta-title {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 960px) {
+  .tut-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .tut-grid  { grid-template-columns: 1fr; }
+  .tut-hero  { padding: 3rem 0 2rem; }
+  .tut-stats { gap: 2rem; }
+  .tut-filter-group { flex-direction: column; align-items: flex-start; }
+  .tut-cta-inner { flex-direction: column; align-items: flex-start; }
+}
+

@@ -1,0 +1,80 @@
+/* ── LEARN SECTION ── */
+.learn-section {
+  padding: 5rem 0 6rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.learn-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.2rem;
+}
+
+/* Center grids with fewer than 3 items */
+.learn-grid-center {
+  display: grid;
+  grid-template-columns: repeat(2, 340px);
+  gap: 1.2rem;
+  justify-content: center;
+}
+
+.lc {
+  background: var(--bg-card);
+  border-radius: 14px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255,255,255,0.06);
+  display: flex; flex-direction: column; gap: 0.7rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+/* Neon glow burst on hover */
+.lc::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), var(--lc), transparent 65%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.lc:hover::before { opacity: 0.12; }
+
+.lc:hover {
+  transform: translateY(-4px);
+  border-color: var(--lc);
+  box-shadow:
+    0 0 18px var(--lc),
+    0 10px 35px rgba(0,0,0,0.5);
+}
+
+/* Make children sit above the glow layer */
+.lc > * { position: relative; z-index: 1; }
+
+.lc-cyan   { --lc: var(--neon-cyan);   }
+.lc-yellow { --lc: var(--neon-yellow); }
+.lc-pink   { --lc: var(--neon-pink);   }
+.lc-purple { --lc: #bf00ff;            }
+.lc-green  { --lc: var(--neon-green);  }
+.lc-orange { --lc: var(--neon-orange); }
+
+.lc-top { display:flex; justify-content:space-between; align-items:flex-start; }
+.lc-num { font-size:0.68rem; font-weight:800; color:var(--lc); letter-spacing:1px; opacity:0.7; font-family:'Inter',monospace; }
+.lc-icon { font-size:1.75rem; }
+.lc-title { font-size:1rem; font-weight:800; color:var(--text-primary); font-family:'Inter',sans-serif; }
+.lc-desc  { font-size:0.83rem; color:var(--text-secondary); line-height:1.65; font-family:'Inter',sans-serif; flex:1; }
+.lc-link  { font-size:0.78rem; font-weight:700; color:var(--lc); text-decoration:none; transition:all 0.2s; margin-top:auto; }
+.lc-link:hover { opacity:0.7; text-shadow: 0 0 8px var(--lc); }
+
+@media (max-width:900px) { .learn-grid, .learn-grid-center { grid-template-columns:repeat(2,1fr); } }
+@media (max-width:560px) {
+  .learn-grid, .learn-grid-center { grid-template-columns:1fr; }
+  .learn-section { padding: 3rem 0 3.5rem; }
+  .lc { padding: 1.2rem; }
+}

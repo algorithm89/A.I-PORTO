@@ -1,0 +1,19 @@
+# ── Production docker-compose (Linux server) ──
+services:
+  backend:
+    build: .
+    container_name: ai-backend
+    network_mode: host
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      VAULT_TOKEN: ${VAULT_TOKEN}
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: ai-frontend
+    network_mode: host
+    depends_on:
+      - backend
+    restart: unless-stopped
+

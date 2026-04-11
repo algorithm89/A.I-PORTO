@@ -1,0 +1,69 @@
+:root {
+  /* 80s inspired color palette - modern twist */
+  --bg:          #08090f;
+  --bg-card:     #0e1118;
+  --bg-raised:   #13171f;
+
+  --neon-pink:   #ff2d78;
+  --neon-cyan:   #00e5ff;
+  --neon-yellow: #ffe600;
+  --neon-purple: #bf00ff;
+  --neon-green:  #39ff14;
+  --neon-orange: #ff6b00;
+
+  --text-primary:   #f0f4ff;
+  --text-secondary: #8fa3c0;
+  --text-muted:     #3d5068;
+
+  --radius: 12px;
+
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  color: var(--text-primary);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+img { max-width: 100%; height: auto; display: block; }
+
+.app { position: relative; }
+
+/* CRT scanlines overlay */
+.app::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.container {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* ── Utilities ── */
+.gradient-text {
+  background: linear-gradient(90deg, var(--neon-pink), var(--neon-cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.neon-border-cyan { border: 1px solid rgba(0,229,255,0.3);  box-shadow: 0 0 14px rgba(0,229,255,0.10); }
+.neon-border-pink { border: 1px solid rgba(255,45,120,0.3); box-shadow: 0 0 14px rgba(255,45,120,0.10); }
+
+@media (max-width: 768px) { .container { padding: 0 1.1rem; } }

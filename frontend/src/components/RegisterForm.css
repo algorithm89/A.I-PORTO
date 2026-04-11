@@ -1,0 +1,141 @@
+/* ── MODAL BACKDROP ── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(6px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: fadeIn 0.18s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.modal-box {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  background: var(--bg-card);
+  border: 1px solid rgba(0,229,255,0.2);
+  border-radius: 20px;
+  padding: 2.2rem 2.2rem 1.8rem;
+  box-shadow: 0 0 60px rgba(0,229,255,0.12), 0 24px 64px rgba(0,0,0,0.7);
+  animation: slideUp 0.22s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(24px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* Close button */
+.modal-close {
+  position: absolute;
+  top: 1rem; right: 1rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-muted);
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.modal-close:hover { background: rgba(255,45,120,0.15); color: var(--neon-pink); border-color: rgba(255,45,120,0.3); }
+
+/* ── FORM CONTENTS ── */
+.reg-header { text-align: center; margin-bottom: 1.6rem; }
+.reg-title {
+  font-size: 1.7rem; font-weight: 900;
+  letter-spacing: -1px; margin: 0.5rem 0 0.4rem;
+  font-family: 'Inter', sans-serif; color: var(--text-primary);
+}
+.reg-sub { font-size: 0.85rem; color: var(--text-secondary); font-family: 'Inter', sans-serif; }
+
+.reg-form { display: flex; flex-direction: column; gap: 1rem; }
+.reg-field { display: flex; flex-direction: column; gap: 0.35rem; }
+
+.reg-label {
+  font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--text-muted); font-family: 'Inter', sans-serif;
+}
+
+.reg-input {
+  background: var(--bg-raised);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 0.65rem 1rem;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s ease;
+  outline: none;
+  width: 100%;
+}
+.reg-input::placeholder { color: var(--text-muted); }
+.reg-input:focus {
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 14px rgba(0,229,255,0.18);
+}
+
+.reg-status {
+  font-size: 0.83rem; font-weight: 600;
+  padding: 0.65rem 1rem; border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+}
+.reg-status-success { background: rgba(57,255,20,0.08);  border: 1px solid rgba(57,255,20,0.25);  color: var(--neon-green); }
+.reg-status-error   { background: rgba(255,45,120,0.08); border: 1px solid rgba(255,45,120,0.25); color: var(--neon-pink);  }
+.reg-status-warning { background: rgba(255,200,0,0.08);  border: 1px solid rgba(255,200,0,0.25);  color: #ffc800; }
+
+.reg-btn {
+  background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+  color: #fff;
+  font-size: 0.95rem; font-weight: 800;
+  padding: 0.78rem 1.5rem;
+  border: none; border-radius: 10px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 20px rgba(0,229,255,0.28);
+  margin-top: 0.3rem;
+}
+.reg-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 0 32px rgba(0,229,255,0.5); }
+.reg-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Login button — pink gradient variant */
+.login-btn {
+  background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
+  box-shadow: 0 0 20px rgba(255,45,120,0.28);
+}
+.login-btn:hover:not(:disabled) { box-shadow: 0 0 32px rgba(255,45,120,0.55); }
+
+/* Switch link */
+.switch-link {
+  background: none; border: none;
+  color: var(--neon-cyan);
+  font-size: 0.72rem; font-weight: 700;
+  cursor: pointer; text-decoration: underline;
+  font-family: 'Inter', sans-serif;
+  padding: 0;
+}
+.switch-link:hover { color: var(--neon-pink); }
+
+.reg-note {
+  text-align: center; margin-top: 1.2rem;
+  font-size: 0.72rem; color: var(--text-muted);
+  line-height: 1.7; font-family: 'Inter', sans-serif;
+}
+
+@media (max-width: 480px) {
+  .modal-box { padding: 1.6rem 1.1rem 1.4rem; border-radius: 16px; }
+  .reg-title { font-size: 1.4rem; }
+}
+
