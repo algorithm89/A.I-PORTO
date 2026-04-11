@@ -17,3 +17,13 @@ services:
       - backend
     restart: unless-stopped
 
+  nginx:
+    image: nginx:alpine
+    container_name: ai-nginx
+    network_mode: host
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+      - frontend
+    restart: unless-stopped

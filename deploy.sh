@@ -33,9 +33,6 @@ echo "✅ .env file found — Docker Compose will read VAULT_TOKEN from it"
 echo "🔨 Building Docker images..."
 docker compose -f docker-compose.prod.yml up --build -d
 
-echo "🧹 Cleaning up old images..."
-docker image prune -f
-
 echo ""
 echo "⏳ Waiting for containers to start..."
 sleep 10
