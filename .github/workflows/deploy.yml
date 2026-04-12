@@ -1,5 +1,5 @@
 # ── Smart Deploy: only rebuild what changed ──
-# Triggers on push to master
+# Triggers on push to master, or manual "Run workflow" button
 # Uses self-hosted runner on the production server
 # Secrets needed in GitHub repo Settings > Secrets:
 #   VAULT_TOKEN  - HashiCorp Vault token
@@ -46,8 +46,12 @@ jobs:
   deploy:
     name: Deploy
     needs: changes
-    if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.frontend == 'true' || needs.changes.outputs.infra == 'true'
-    runs-on: self-hosted
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      needs.changes.outputs.backend == 'true' ||
+      needs.changes.outputs.frontend == 'true' ||
+      needs.changes.outputs.infra == 'true'
+    runs-on: [self-hosted, bublik]
 
     steps:
       - name: Checkout code
@@ -58,23 +62,23 @@ jobs:
           echo "VAULT_TOKEN=${{ secrets.VAULT_TOKEN }}" > .env
 
       - name: Build Backend
-        if: needs.changes.outputs.backend == 'true'
+        if: needs.changes.outputs.backend == 'true' || github.event.inputs.deploy_all == 'true'
         run: docker compose -f docker-compose.prod.yml build --no-cache backend
 
       - name: Build Frontend
-        if: needs.changes.outputs.frontend == 'true'
+        if: needs.changes.outputs.frontend == 'true' || github.event.inputs.deploy_all == 'true'
         run: docker compose -f docker-compose.prod.yml build --no-cache frontend
 
-      - name: Restart all (infra changed)
-        if: needs.changes.outputs.infra == 'true'
+      - name: Deploy all services
+        if: needs.changes.outputs.infra == 'true' || github.event.inputs.deploy_all == 'true'
         run: docker compose -f docker-compose.prod.yml up -d
 
       - name: Restart Backend only
-        if: needs.changes.outputs.backend == 'true' && needs.changes.outputs.infra != 'true'
+        if: needs.changes.outputs.backend == 'true' && needs.changes.outputs.infra != 'true' && github.event_name != 'workflow_dispatch'
         run: docker compose -f docker-compose.prod.yml up -d backend
 
       - name: Restart Frontend only
-        if: needs.changes.outputs.frontend == 'true' && needs.changes.outputs.infra != 'true'
+        if: needs.changes.outputs.frontend == 'true' && needs.changes.outputs.infra != 'true' && github.event_name != 'workflow_dispatch'
         run: docker compose -f docker-compose.prod.yml up -d frontend
 
       - name: Wait for startup
