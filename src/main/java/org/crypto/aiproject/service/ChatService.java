@@ -23,17 +23,22 @@ public class ChatService {
     private final WebClient webClient;
     private final String model;
     private final String systemPrompt;
+    private final String guestSystemPrompt;
 
     public ChatService(
             @Value("${ollama.base-url:http://127.0.0.1:11434}") String ollamaBaseUrl,
             @Value("${ollama.model:llama3.2:3b}") String model,
-            @Value("${ollama.system-prompt:You are a helpful AI assistant for BublikStudios. Be concise, friendly, and helpful.}") String systemPrompt
+            @Value("${ollama.system-prompt:You are a helpful AI assistant for BublikStudios.}") String systemPrompt
     ) {
         this.webClient = WebClient.builder()
                 .baseUrl(ollamaBaseUrl)
                 .build();
         this.model = model;
         this.systemPrompt = systemPrompt;
+        this.guestSystemPrompt = systemPrompt
+                + " The user is a guest visitor (not logged in). Welcome them warmly to BublikStudios! "
+                + "Gently encourage them to create a free account to get the full experience. "
+                + "You can still help them, but remind them that members get more features.";
         log.info("ChatService initialized | ollama={} model={}", ollamaBaseUrl, model);
     }
 
@@ -41,13 +46,16 @@ public class ChatService {
      * Stream a chat response from Ollama.
      * Returns a Flux of text chunks (token by token).
      */
-    public Flux<String> streamChat(String username, ChatRequest request) {
-        log.info("CHAT request | user={} message={}", username,
+    public Flux<String> streamChat(String username, boolean loggedIn, ChatRequest request) {
+        log.info("CHAT request | user={} loggedIn={} message={}", username, loggedIn,
                 request.getMessage().substring(0, Math.min(80, request.getMessage().length())));
+
+        // Pick system prompt based on login status
+        String prompt = loggedIn ? systemPrompt : guestSystemPrompt;
 
         // Build message list: system + history + current message
         List<Map<String, String>> messages = new ArrayList<>();
-        messages.add(Map.of("role", "system", "content", systemPrompt));
+        messages.add(Map.of("role", "system", "content", prompt));
 
         if (request.getHistory() != null) {
             for (ChatRequest.ChatMessage msg : request.getHistory()) {
@@ -80,8 +88,7 @@ public class ChatService {
                     }
                     return null;
                 })
-                .doOnComplete(() -> log.info("CHAT complete | user={}", username))
+                .doOnComplete(() -> log.info("CHAT complete | user={} loggedIn={}", username, loggedIn))
                 .doOnError(e -> log.error("CHAT error | user={} error={}", username, e.getMessage()));
     }
 }
-

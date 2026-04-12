@@ -38,6 +38,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Public auth endpoints
                         .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/confirm").permitAll()
+                        // Chatbot — open to everyone (logged-in users get personalized experience)
+                        .requestMatchers("/api/chat").permitAll()
                         // Admin endpoints — ADMIN role required
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         // Everything else requires authentication

@@ -12,6 +12,7 @@ export default function ChatBot() {
   const inputRef                  = useRef(null)
 
   const token = localStorage.getItem('token')
+  const username = localStorage.getItem('username')
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -20,8 +21,8 @@ export default function ChatBot() {
 
   // Focus input when panel opens
   useEffect(() => {
-    if (open && token) setTimeout(() => inputRef.current?.focus(), 100)
-  }, [open, token])
+    if (open) setTimeout(() => inputRef.current?.focus(), 100)
+  }, [open])
 
   async function handleSend() {
     const text = input.trim()
@@ -43,12 +44,13 @@ export default function ChatBot() {
         content: m.content,
       }))
 
+      // Build headers — include JWT only if logged in
+      const headers = { 'Content-Type': 'application/json' }
+      if (token) headers['Authorization'] = `Bearer ${token}`
+
       const res = await fetch(`${API_URL}/api/chat`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        headers,
         body: JSON.stringify({ message: text, history: history.slice(0, -1) }),
       })
 
@@ -113,6 +115,10 @@ export default function ChatBot() {
     }
   }
 
+  const greeting = token
+    ? `Hey ${username || 'there'}! 👋 I'm the BublikStudios AI. How are you doing today?`
+    : `Hey there! 👋 Welcome to BublikStudios! I'm your AI assistant. Ask me anything or tell me what you're looking for!`
+
   return (
     <>
       {/* Floating action button */}
@@ -131,59 +137,49 @@ export default function ChatBot() {
             <button className="chatbot-close" onClick={() => setOpen(false)} aria-label="Close">✕</button>
           </div>
 
-          {!token ? (
-            /* Not logged in */
-            <div className="chatbot-login-prompt">
-              <p>🔒 <strong>Log in</strong> to chat with our AI assistant.</p>
-            </div>
-          ) : (
-            <>
-              {/* Messages */}
-              <div className="chatbot-messages">
-                {messages.length === 0 && (
-                  <div className="chatbot-msg chatbot-msg-assistant">
-                    Hey! 👋 I'm the BublikStudios AI. Ask me anything!
-                  </div>
-                )}
-                {messages.map((msg, i) => (
-                  <div key={i} className={`chatbot-msg chatbot-msg-${msg.role}`}>
-                    {msg.content}
-                  </div>
-                ))}
-                {streaming && messages[messages.length - 1]?.content === '' && (
-                  <div className="chatbot-typing">
-                    <span /><span /><span />
-                  </div>
-                )}
-                <div ref={messagesEndRef} />
+          {/* Messages — available to everyone */}
+          <div className="chatbot-messages">
+            {messages.length === 0 && (
+              <div className="chatbot-msg chatbot-msg-assistant">
+                {greeting}
               </div>
+            )}
+            {messages.map((msg, i) => (
+              <div key={i} className={`chatbot-msg chatbot-msg-${msg.role}`}>
+                {msg.content}
+              </div>
+            ))}
+            {streaming && messages[messages.length - 1]?.content === '' && (
+              <div className="chatbot-typing">
+                <span /><span /><span />
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
 
-              {/* Input */}
-              <div className="chatbot-input-area">
-                <textarea
-                  ref={inputRef}
-                  className="chatbot-input"
-                  rows={1}
-                  placeholder="Type a message..."
-                  value={input}
-                  onChange={e => setInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  disabled={streaming}
-                />
-                <button
-                  className="chatbot-send"
-                  onClick={handleSend}
-                  disabled={streaming || !input.trim()}
-                  aria-label="Send"
-                >
-                  ▶
-                </button>
-              </div>
-            </>
-          )}
+          {/* Input */}
+          <div className="chatbot-input-area">
+            <textarea
+              ref={inputRef}
+              className="chatbot-input"
+              rows={1}
+              placeholder="Type a message..."
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              disabled={streaming}
+            />
+            <button
+              className="chatbot-send"
+              onClick={handleSend}
+              disabled={streaming || !input.trim()}
+              aria-label="Send"
+            >
+              ▶
+            </button>
+          </div>
         </div>
       )}
     </>
   )
 }
-
