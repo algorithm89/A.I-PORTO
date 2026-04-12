@@ -1,7 +1,6 @@
 # ── Deploy MySQL (manual trigger only) ──
 # Only runs when you manually trigger it from GitHub Actions tab
 # Secrets needed:
-#   SERVER_HOST, SERVER_USER, SERVER_SSH_KEY
 #   MYSQL_ROOT_PASSWORD, MYSQL_DATABASE, MYSQL_USER_PASSWORD
 
 name: Deploy MySQL
@@ -12,45 +11,34 @@ on:
 jobs:
   deploy-mysql:
     name: Deploy MySQL
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
-      - name: Mask sensitive values
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create MySQL .env
+        working-directory: ./mysql
         run: |
-          echo "::add-mask::${{ secrets.MYSQL_ROOT_PASSWORD }}"
-          echo "::add-mask::${{ secrets.MYSQL_USER_PASSWORD }}"
-          echo "::add-mask::${{ secrets.SERVER_HOST }}"
+          cat > .env <<EOF
+          MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}
+          MYSQL_USER_PASSWORD=${{ secrets.MYSQL_USER_PASSWORD }}
+          EOF
 
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script_stop: true
-          script: |
-            set -e
-            APP_DIR="/home/bublik/A.I-PORTO"
-            cd "$APP_DIR/mysql"
+      - name: Start MySQL
+        working-directory: ./mysql
+        run: docker compose up -d
 
-            echo "=== MySQL Deploy ==="
+      - name: Wait for MySQL
+        run: sleep 5
 
-            # Create .env for MySQL
-            cat > .env <<EOF
-            MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
-            MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}
-            MYSQL_USER_PASSWORD=${{ secrets.MYSQL_USER_PASSWORD }}
-            EOF
+      - name: Delete .env
+        if: always()
+        working-directory: ./mysql
+        run: rm -f .env
 
-            docker compose up -d
-
-            sleep 5
-
-            rm -f .env
-            echo "[OK] .env deleted"
-
-            echo ""
-            docker ps --filter name=bublik-mysql
-            echo ""
-            echo "=== MySQL Deploy Complete ==="
-
+      - name: Show status
+        run: |
+          docker ps --filter name=bublik-mysql
+          echo "=== MySQL Deploy Complete ==="

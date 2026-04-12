@@ -1,10 +1,8 @@
 # ── Smart Deploy: only rebuild what changed ──
 # Triggers on push to master
+# Uses self-hosted runner on the production server
 # Secrets needed in GitHub repo Settings > Secrets:
-#   SERVER_HOST     - 152.53.210.206
-#   SERVER_USER     - root (or your SSH user)
-#   SERVER_SSH_KEY  - private SSH key for the server
-#   VAULT_TOKEN     - HashiCorp Vault token
+#   VAULT_TOKEN  - HashiCorp Vault token
 
 name: Deploy to Production
 
@@ -43,89 +41,49 @@ jobs:
     name: Deploy
     needs: changes
     if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.frontend == 'true' || needs.changes.outputs.infra == 'true'
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
-      - name: Mask sensitive values
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create .env
         run: |
-          echo "::add-mask::${{ secrets.VAULT_TOKEN }}"
-          echo "::add-mask::${{ secrets.SERVER_HOST }}"
+          echo "VAULT_TOKEN=${{ secrets.VAULT_TOKEN }}" > .env
 
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.2.0
-        env:
-          DEPLOY_BACKEND: ${{ needs.changes.outputs.backend }}
-          DEPLOY_FRONTEND: ${{ needs.changes.outputs.frontend }}
-          DEPLOY_INFRA: ${{ needs.changes.outputs.infra }}
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          envs: DEPLOY_BACKEND,DEPLOY_FRONTEND,DEPLOY_INFRA
-          script_stop: true
-          script: |
-            set -e
-            APP_DIR="/home/bublik/A.I-PORTO"
+      - name: Build Backend
+        if: needs.changes.outputs.backend == 'true'
+        run: docker compose -f docker-compose.prod.yml build --no-cache backend
 
-            echo "=== BublikStudios Smart Deploy ==="
-            echo "  Backend : $DEPLOY_BACKEND"
-            echo "  Frontend: $DEPLOY_FRONTEND"
-            echo "  Infra   : $DEPLOY_INFRA"
-            echo "=================================="
+      - name: Build Frontend
+        if: needs.changes.outputs.frontend == 'true'
+        run: docker compose -f docker-compose.prod.yml build --no-cache frontend
 
-            # Pull latest code
-            if [ -d "$APP_DIR" ]; then
-              cd "$APP_DIR"
-              git pull origin master
-            else
-              git clone https://github.com/algorithm89/A.I-PORTO.git "$APP_DIR"
-              cd "$APP_DIR"
-            fi
+      - name: Restart all (infra changed)
+        if: needs.changes.outputs.infra == 'true'
+        run: docker compose -f docker-compose.prod.yml up -d
 
-            # Create .env with Vault token
-            echo "VAULT_TOKEN=${{ secrets.VAULT_TOKEN }}" > .env
+      - name: Restart Backend only
+        if: needs.changes.outputs.backend == 'true' && needs.changes.outputs.infra != 'true'
+        run: docker compose -f docker-compose.prod.yml up -d backend
 
-            # Build only what changed
-            SERVICES=""
+      - name: Restart Frontend only
+        if: needs.changes.outputs.frontend == 'true' && needs.changes.outputs.infra != 'true'
+        run: docker compose -f docker-compose.prod.yml up -d frontend
 
-            if [ "$DEPLOY_BACKEND" = "true" ]; then
-              echo "[BUILD] Backend..."
-              docker compose -f docker-compose.prod.yml build --no-cache backend
-              SERVICES="$SERVICES backend"
-            fi
+      - name: Wait for startup
+        run: sleep 10
 
-            if [ "$DEPLOY_FRONTEND" = "true" ]; then
-              echo "[BUILD] Frontend..."
-              docker compose -f docker-compose.prod.yml build --no-cache frontend
-              SERVICES="$SERVICES frontend"
-            fi
+      - name: Delete .env
+        if: always()
+        run: rm -f .env
 
-            # If infra changed (nginx.conf, docker-compose), restart everything
-            if [ "$DEPLOY_INFRA" = "true" ]; then
-              echo "[INFRA] Config changed — restarting all services..."
-              docker compose -f docker-compose.prod.yml up -d
-            elif [ -n "$SERVICES" ]; then
-              echo "[RESTART] Restarting:$SERVICES"
-              docker compose -f docker-compose.prod.yml up -d $SERVICES
-            fi
-
-            # Wait for containers
-            sleep 10
-
-            # Delete .env — token is loaded into container env
-            rm -f .env
-            echo "[OK] .env deleted"
-
-            # Status
-            echo ""
-            echo "=== Container Status ==="
-            docker compose -f docker-compose.prod.yml ps
-
-            if [ "$DEPLOY_BACKEND" = "true" ]; then
-              echo ""
-              echo "=== Backend Logs (last 15 lines) ==="
-              docker logs ai-backend --tail 15 2>&1 || true
-            fi
-
-            echo ""
-            echo "=== Deploy Complete ==="
+      - name: Show status
+        run: |
+          echo "=== Container Status ==="
+          docker compose -f docker-compose.prod.yml ps
+          echo ""
+          echo "=== Backend Logs (last 15 lines) ==="
+          docker logs ai-backend --tail 15 2>&1 || true
+          echo ""
+          echo "=== Deploy Complete ==="
