@@ -87,7 +87,7 @@ jobs:
 
       - name: Setup Portainer admin (first boot only)
         run: |
-          curl -sf -X POST http://127.0.0.1:9000/portainer/api/users/admin/init \
+          curl -sk -X POST https://127.0.0.1:9443/api/users/admin/init \
             -H 'Content-Type: application/json' \
             -d '{"Username":"admin","Password":"${{ secrets.PORTAINER_ADMIN_PASSWORD }}"}' \
             && echo "[OK] Portainer admin created" \

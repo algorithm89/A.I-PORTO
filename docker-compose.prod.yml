@@ -53,11 +53,9 @@ services:
     image: portainer/portainer-ce:lts
     container_name: ai-portainer
     network_mode: host
-    command:
-      - --bind
-      - 127.0.0.1:9000
-      - --base-url
-      - /portainer
+    # Built-in HTTPS on port 9443 (self-signed cert)
+    # Access at https://152.53.210.206:9443
+    command: --bind-https 0.0.0.0:9443 --http-disabled
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
