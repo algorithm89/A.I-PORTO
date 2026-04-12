@@ -9,6 +9,12 @@ name: Deploy to Production
 on:
   push:
     branches: [master]
+  workflow_dispatch:
+    inputs:
+      deploy_all:
+        description: 'Deploy everything (backend + frontend + infra)'
+        type: boolean
+        default: true
 
 jobs:
   # ── Step 1: Figure out what changed ──
