@@ -1,0 +1,205 @@
+# ══════════════════════════════════════════════════════════════════════════════
+#  Deploy Spring Boot Backend
+#  
+#  Builds the Maven project, pushes to Docker Hub, deploys to self-hosted runner.
+#  Uses BuildKit cache to persist Maven .m2 repository between builds.
+# ══════════════════════════════════════════════════════════════════════════════
+
+name: Deploy Backend
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - 'src/**'
+      - 'pom.xml'
+      - 'Mvn-React-App/**'
+  workflow_dispatch:    # Manual trigger
+
+env:
+  DOCKER_BUILDKIT: 1    # Enable BuildKit for cache mounts
+
+jobs:
+  build-and-deploy:
+    runs-on: [self-hosted, Linux, X64, bublik-hosted]
+    environment: SKYNET
+
+    steps:
+      # ── Checkout code ───────────────────────────────────────────────────────
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # ── Build Docker image (with BuildKit cache) ───────────────────────────
+      - name: Build backend image
+        run: |
+          echo "📦 Building Spring Boot backend..."
+          
+          # Enable BuildKit
+          export DOCKER_BUILDKIT=1
+          
+          # Build with cache
+          docker build \
+            --build-arg BUILDKIT_INLINE_CACHE=1 \
+            -t ${{ secrets.DOCKER_USERNAME }}/backend:latest \
+            -f Mvn-React-App/Dockerfile .
+          
+          echo "✅ Build complete"
+
+      # ── Login to Docker Hub ─────────────────────────────────────────────────
+      - name: Login to Docker Hub
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+      # ── Push image ──────────────────────────────────────────────────────────
+      - name: Push image
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/backend:latest
+          echo "✅ Pushed to Docker Hub"
+
+      # ── Deploy ──────────────────────────────────────────────────────────────
+      - name: Deploy backend
+        run: |
+          set -e
+          
+          # Show which user we're running as
+          echo "👤 Running as user: $(whoami)"
+          echo "🏠 Home directory: $HOME"
+          
+          # Create deployment directory (works for any user)
+          DEPLOY_DIR="$HOME/bublik-backend"
+          mkdir -p "$DEPLOY_DIR"
+          cd "$DEPLOY_DIR"
+          
+          # Copy compose file
+          cp $GITHUB_WORKSPACE/Mvn-React-App/docker-compose.yml .
+          
+          # Create .env file with secrets (cleaned up on exit)
+          trap 'rm -f .env' EXIT
+          
+          cat > .env << EOF
+          DOCKER_IMAGE=${{ secrets.DOCKER_USERNAME }}/backend:latest
+          VAULT_TOKEN=${{ secrets.VAULT_TOKEN }}
+          MYSQL_USER_PASSWORD=${{ secrets.MYSQL_USER_PASSWORD }}
+          EOF
+          
+          echo "🔐 Environment configured"
+          
+          # Test service connectivity
+          echo ""
+          echo "🔗 Testing service connectivity..."
+          
+          # Test MySQL on localhost
+          echo "   Testing MySQL (127.0.0.1:3306)..."
+          nc -zv 127.0.0.1 3306 2>&1 || echo "   ❌ MySQL not reachable"
+          
+          # Test Vault on localhost
+          echo "   Testing Vault (127.0.0.1:8200)..."
+          nc -zv 127.0.0.1 8200 2>&1 || echo "   ❌ Vault not reachable"
+          
+          # Test Vault API
+          echo ""
+          echo "🔐 Testing Vault API (127.0.0.1:8200)..."
+          
+          # Check Vault seal status
+          VAULT_STATUS=$(curl -s -w "%{http_code}" -o /dev/null http://127.0.0.1:8200/v1/sys/health 2>/dev/null || echo "000")
+          echo "   Vault HTTP status: $VAULT_STATUS"
+          
+          # If sealed (503), unseal it
+          if [ "$VAULT_STATUS" = "503" ]; then
+            echo "🔓 Vault is SEALED - unsealing now..."
+            
+            curl -s -X PUT -d '{"key": "${{ secrets.VAULT_UNSEAL_KEY_1 }}"}' \
+              http://127.0.0.1:8200/v1/sys/unseal > /dev/null
+            echo "   Applied unseal key 1"
+            
+            curl -s -X PUT -d '{"key": "${{ secrets.VAULT_UNSEAL_KEY_2 }}"}' \
+              http://127.0.0.1:8200/v1/sys/unseal > /dev/null
+            echo "   Applied unseal key 2"
+            
+            curl -s -X PUT -d '{"key": "${{ secrets.VAULT_UNSEAL_KEY_3 }}"}' \
+              http://127.0.0.1:8200/v1/sys/unseal > /dev/null
+            echo "   Applied unseal key 3"
+            
+            VAULT_STATUS=$(curl -s -w "%{http_code}" -o /dev/null http://127.0.0.1:8200/v1/sys/health 2>/dev/null || echo "000")
+            echo "   Vault HTTP status after unseal: $VAULT_STATUS"
+          fi
+          
+          if [ "$VAULT_STATUS" = "200" ]; then
+            echo "✅ Vault is unsealed and ready"
+          elif [ "$VAULT_STATUS" = "503" ]; then
+            echo "❌ Vault is still SEALED!"
+          elif [ "$VAULT_STATUS" = "000" ]; then
+            echo "❌ Vault not reachable!"
+          else
+            echo "⚠️ Vault status: $VAULT_STATUS"
+          fi
+          
+          TOKEN_PREVIEW=$(echo "${{ secrets.VAULT_TOKEN }}" | head -c 10)
+          echo "   Token preview: ${TOKEN_PREVIEW}..."
+          
+          # Test reading secrets
+          echo ""
+          echo "🔑 Testing Vault secret access at secret/data/bublikstudios..."
+          VAULT_RESPONSE=$(curl -s -H "X-Vault-Token: ${{ secrets.VAULT_TOKEN }}" \
+            http://127.0.0.1:8200/v1/secret/data/bublikstudios 2>/dev/null || echo '{"error":"curl failed"}')
+          
+          # Show keys only (not values for security)
+          echo "Response keys: $(echo "$VAULT_RESPONSE" | grep -o '"[^"]*":' | head -20)"
+          
+          if echo "$VAULT_RESPONSE" | grep -q "curl failed"; then
+            echo "❌ Could not connect to Vault"
+          elif echo "$VAULT_RESPONSE" | grep -q "permission denied"; then
+            echo "❌ Token does not have permission!"
+          elif echo "$VAULT_RESPONSE" | grep -q "missing client token"; then
+            echo "❌ Token is empty or invalid!"
+          elif echo "$VAULT_RESPONSE" | grep -q '"data"'; then
+            echo "✅ Successfully read secrets from Vault!"
+          else
+            echo "⚠️ Unexpected response"
+            echo "$VAULT_RESPONSE"
+          fi
+          echo ""
+          
+          # Stop old container
+          echo "⏹️ Stopping old container..."
+          docker compose down || true
+          
+          # Pull latest image
+          echo "📥 Pulling latest image..."
+          docker compose pull
+          
+          # Start new container
+          echo "🚀 Starting backend..."
+          docker compose up -d
+          
+          # Wait for startup
+          echo "⏳ Waiting for startup..."
+          sleep 15
+          
+          # Debug: Check environment variables inside container
+          echo ""
+          echo "🔍 Debugging container environment..."
+          echo "   VAULT_ADDR:"
+          docker exec bublik-backend printenv VAULT_ADDR || echo "   (not set)"
+          echo "   VAULT_TOKEN (first 10 chars):"
+          docker exec bublik-backend sh -c 'echo $VAULT_TOKEN | head -c 10' || echo "   (not set)"
+          echo "   SPRING_PROFILES_ACTIVE:"
+          docker exec bublik-backend printenv SPRING_PROFILES_ACTIVE || echo "   (not set)"
+          
+          # Debug: Test Vault connectivity FROM INSIDE the container
+          echo ""
+          echo "🔗 Testing Vault from INSIDE bublik-backend container..."
+          docker exec bublik-backend sh -c 'curl -s -o /dev/null -w "HTTP %{http_code}" http://bublik-vault:8200/v1/sys/health' 2>/dev/null || echo "   ❌ curl not available or Vault not reachable"
+          echo ""
+          
+          # Show logs
+          echo "📋 Container logs (last 100 lines):"
+          docker logs bublik-backend --tail 100
+          
+          echo ""
+          echo "════════════════════════════════════════════════════════════════"
+          echo "✅ Backend deployed!"
+          echo "   Test with: curl http://localhost:8080/api/health"
+          echo "   Logs:      docker logs -f bublik-backend"
+          echo "════════════════════════════════════════════════════════════════"
+

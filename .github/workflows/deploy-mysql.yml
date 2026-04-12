@@ -1,0 +1,55 @@
+name: Deploy MySQL
+
+on:
+  workflow_dispatch:
+    inputs:
+      db_name:
+        description: "Database name"
+        required: true
+        default: "bublikdb"
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, X64, bublik-hosted]
+    environment: SKYNET
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Deploy MySQL
+        run: |
+          set -e
+
+          mkdir -p /home/bublik/bublik-mysql
+          cd /home/bublik/bublik-mysql
+
+          # always wipe .env on exit
+          trap 'rm -f .env' EXIT
+
+          # copy latest compose file from repo
+          cp $GITHUB_WORKSPACE/mysql/docker-compose.yml .
+
+          echo "Creating .env..."
+          printf 'MYSQL_ROOT_PASSWORD=%s\nMYSQL_USER_PASSWORD=%s\nMYSQL_DATABASE=%s\n' \
+            '${{ secrets.MYSQL_ROOT_PASSWORD }}' \
+            '${{ secrets.MYSQL_USER_PASSWORD }}' \
+            '${{ github.event.inputs.db_name }}' > .env
+
+          echo "DEBUG (masked):"
+          grep MYSQL .env | sed 's/=.*$/=****/'
+
+          echo "Creating docker network if not exists..."
+          docker network create bublik-network 2>/dev/null || true
+
+          echo "Stopping old container..."
+          docker compose down || true
+
+          echo "Starting MySQL..."
+          docker compose up -d
+
+          echo "Waiting..."
+          sleep 15
+
+          echo "Logs:"
+          docker logs bublik-mysql || true
