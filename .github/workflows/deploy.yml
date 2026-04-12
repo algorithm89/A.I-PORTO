@@ -2,7 +2,8 @@
 # Triggers on push to master, or manual "Run workflow" button
 # Uses self-hosted runner on the production server
 # Secrets needed in GitHub repo Settings > Secrets:
-#   VAULT_TOKEN  - HashiCorp Vault token
+#   VAULT_TOKEN              - HashiCorp Vault token
+#   PORTAINER_ADMIN_PASSWORD - Portainer admin password (first boot only)
 
 name: Deploy to Production
 
@@ -83,6 +84,14 @@ jobs:
 
       - name: Wait for startup
         run: sleep 10
+
+      - name: Setup Portainer admin (first boot only)
+        run: |
+          curl -sf -X POST http://127.0.0.1:9000/portainer/api/users/admin/init \
+            -H 'Content-Type: application/json' \
+            -d '{"Username":"admin","Password":"${{ secrets.PORTAINER_ADMIN_PASSWORD }}"}' \
+            && echo "[OK] Portainer admin created" \
+            || echo "[SKIP] Portainer admin already exists"
 
       - name: Delete .env
         if: always()
