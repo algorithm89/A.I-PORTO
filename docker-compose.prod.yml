@@ -32,6 +32,8 @@ services:
     build: ./frontend
     container_name: ai-frontend
     network_mode: host
+    environment:
+      SERVE_HOST: "127.0.0.1"
     depends_on:
       - backend
     restart: unless-stopped
