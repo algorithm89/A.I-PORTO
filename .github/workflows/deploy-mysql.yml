@@ -1,55 +1,56 @@
+# ── Deploy MySQL (manual trigger only) ──
+# Only runs when you manually trigger it from GitHub Actions tab
+# Secrets needed:
+#   SERVER_HOST, SERVER_USER, SERVER_SSH_KEY
+#   MYSQL_ROOT_PASSWORD, MYSQL_DATABASE, MYSQL_USER_PASSWORD
+
 name: Deploy MySQL
 
 on:
   workflow_dispatch:
-    inputs:
-      db_name:
-        description: "Database name"
-        required: true
-        default: "bublikdb"
 
 jobs:
-  deploy:
-    runs-on: [self-hosted, Linux, X64, bublik-hosted]
-    environment: SKYNET
+  deploy-mysql:
+    name: Deploy MySQL
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Deploy MySQL
+      - name: Mask sensitive values
         run: |
-          set -e
+          echo "::add-mask::${{ secrets.MYSQL_ROOT_PASSWORD }}"
+          echo "::add-mask::${{ secrets.MYSQL_USER_PASSWORD }}"
+          echo "::add-mask::${{ secrets.SERVER_HOST }}"
 
-          mkdir -p /home/bublik/bublik-mysql
-          cd /home/bublik/bublik-mysql
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script_stop: true
+          script: |
+            set -e
+            APP_DIR="/home/bublik/A.I-PORTO"
+            cd "$APP_DIR/mysql"
 
-          # always wipe .env on exit
-          trap 'rm -f .env' EXIT
+            echo "=== MySQL Deploy ==="
 
-          # copy latest compose file from repo
-          cp $GITHUB_WORKSPACE/mysql/docker-compose.yml .
+            # Create .env for MySQL
+            cat > .env <<EOF
+            MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
+            MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}
+            MYSQL_USER_PASSWORD=${{ secrets.MYSQL_USER_PASSWORD }}
+            EOF
 
-          echo "Creating .env..."
-          printf 'MYSQL_ROOT_PASSWORD=%s\nMYSQL_USER_PASSWORD=%s\nMYSQL_DATABASE=%s\n' \
-            '${{ secrets.MYSQL_ROOT_PASSWORD }}' \
-            '${{ secrets.MYSQL_USER_PASSWORD }}' \
-            '${{ github.event.inputs.db_name }}' > .env
+            docker compose up -d
 
-          echo "DEBUG (masked):"
-          grep MYSQL .env | sed 's/=.*$/=****/'
+            sleep 5
 
-          echo "Creating docker network if not exists..."
-          docker network create bublik-network 2>/dev/null || true
+            rm -f .env
+            echo "[OK] .env deleted"
 
-          echo "Stopping old container..."
-          docker compose down || true
+            echo ""
+            docker ps --filter name=bublik-mysql
+            echo ""
+            echo "=== MySQL Deploy Complete ==="
 
-          echo "Starting MySQL..."
-          docker compose up -d
-
-          echo "Waiting..."
-          sleep 15
-
-          echo "Logs:"
-          docker logs bublik-mysql || true
