@@ -7,6 +7,7 @@ import CartoonBelt    from './components/CartoonBelt'
 import AISection      from './components/AISection'
 import CategoryCards  from './components/CategoryCards'
 import Footer         from './components/Footer'
+import ChatBot        from './components/ChatBot'
 import BlogPage       from './pages/BlogPage'
 import TutorialsPage  from './pages/TutorialsPage'
 
@@ -32,6 +33,7 @@ function App() {
         <Route path="/tutorials"  element={<TutorialsPage />} />
       </Routes>
       <Footer />
+      <ChatBot />
     </div>
   )
 }

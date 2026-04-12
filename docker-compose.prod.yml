@@ -1,5 +1,18 @@
 # ── Production docker-compose (Linux server) ──
 services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ai-ollama
+    network_mode: host
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://127.0.0.1:11434/api/tags || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
   backend:
     build: .
     container_name: ai-backend
@@ -7,6 +20,9 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: prod
       VAULT_TOKEN: ${VAULT_TOKEN}
+    depends_on:
+      ollama:
+        condition: service_healthy
     restart: unless-stopped
 
   frontend:
@@ -27,3 +43,7 @@ services:
       - backend
       - frontend
     restart: unless-stopped
+
+volumes:
+  ollama_data:
+
