@@ -35,7 +35,12 @@ echo ""
 echo "🔧 Ensuring infrastructure is running (ollama, portainer)..."
 $COMPOSE up -d --no-recreate ollama portainer
 
-# ── Step 2: Rebuild & restart CODE only ──
+# ── Step 2: Clean up stale code containers (prevents name conflicts) ──
+echo ""
+echo "🧹 Removing old code containers..."
+docker rm -f ai-backend ai-frontend ai-nginx 2>/dev/null || true
+
+# ── Step 3: Rebuild & restart CODE only ──
 echo ""
 echo "🔨 Building & deploying code (backend + frontend)..."
 $COMPOSE up --build -d --no-deps backend frontend
