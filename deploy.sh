@@ -2,6 +2,7 @@
 # ── deploy.sh — Run this on the Linux server ──
 set -e
 
+COMPOSE="docker compose -f docker-compose.prod.yml"
 REPO="https://github.com/algorithm89/A.I-PORTO.git"
 APP_DIR="/home/bublik/A.I-PORTO"
 
@@ -27,11 +28,21 @@ if [ ! -f .env ]; then
   exit 1
 fi
 
-echo "✅ .env file found — Docker Compose will read VAULT_TOKEN from it"
+echo "✅ .env file found"
 
-# Build & start with production compose
-echo "🔨 Building Docker images..."
-docker compose -f docker-compose.prod.yml up --build -d
+# ── Step 1: Ensure infra is running (won't recreate if already up) ──
+echo ""
+echo "🔧 Ensuring infrastructure is running (ollama, portainer)..."
+$COMPOSE up -d --no-recreate ollama portainer
+
+# ── Step 2: Rebuild & restart CODE only ──
+echo ""
+echo "🔨 Building & deploying code (backend + frontend)..."
+$COMPOSE up --build -d --no-deps backend frontend
+
+echo ""
+echo "🔄 Restarting nginx (picks up new frontend)..."
+$COMPOSE up -d --no-deps nginx
 
 echo ""
 echo "⏳ Waiting for containers to start..."
@@ -40,7 +51,7 @@ sleep 10
 # Show status
 echo ""
 echo "📦 Container status:"
-docker compose -f docker-compose.prod.yml ps
+$COMPOSE ps
 
 echo ""
 echo "📋 Backend logs (last 20 lines):"
@@ -49,6 +60,5 @@ docker logs ai-backend --tail 20
 echo ""
 echo "================================================"
 echo "✅ Deploy complete!"
-echo "   Backend:  http://152.53.210.206:8080"
-echo "   Frontend: http://152.53.210.206:3000"
+echo "   Site: https://bublikstudios.net"
 echo "================================================"
