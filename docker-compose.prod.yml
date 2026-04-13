@@ -1,9 +1,10 @@
 # ── Production docker-compose (Linux server) ──
-# Infrastructure: ollama, portainer  (always running, don't rebuild)
+# Infrastructure: ollama (always running, don't rebuild)
 # Code:          backend, frontend, nginx (rebuilt on deploy)
+# Portainer:     see portainer/docker-compose.yml (deployed separately)
 #
 # Deploy code only:  docker compose -f docker-compose.prod.yml up --build -d --no-deps backend frontend && docker compose -f docker-compose.prod.yml restart nginx
-# Start infra once:  docker compose -f docker-compose.prod.yml up -d ollama portainer
+# Start infra once:  docker compose -f docker-compose.prod.yml up -d ollama
 
 services:
 
@@ -26,16 +27,6 @@ services:
       timeout: 10s
       retries: 5
       start_period: 15s
-
-  portainer:
-    image: portainer/portainer-ce:latest
-    container_name: ai-portainer
-    network_mode: host
-    command: --bind 127.0.0.1:9000
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - portainer_data:/data
-    restart: unless-stopped
 
   # ═══════════════════════════════════
   # CODE (rebuilt on every deploy)
@@ -69,5 +60,4 @@ services:
 
 volumes:
   ollama_data:
-  portainer_data:
 

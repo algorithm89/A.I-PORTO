@@ -32,8 +32,8 @@ echo "✅ .env file found"
 
 # ── Step 1: Ensure infra is running (won't recreate if already up) ──
 echo ""
-echo "🔧 Ensuring infrastructure is running (ollama, portainer)..."
-$COMPOSE up -d --no-recreate ollama portainer
+echo "🔧 Ensuring infrastructure is running (ollama)..."
+$COMPOSE up -d --no-recreate ollama
 
 # ── Step 2: Clean up stale code containers (prevents name conflicts) ──
 echo ""
