@@ -157,6 +157,8 @@
   .explore-section { padding: 3rem 0 3.5rem; }
   .sec-title { font-size: clamp(1.6rem, 7vw, 2.2rem) !important; letter-spacing: -0.5px !important; }
   .sec-sub { font-size: 0.85rem; }
+  .ex-img-wrap { height: 220px; }
+  .ex-yellow .ex-img { object-position: center 85% !important; }
 }
 
 
