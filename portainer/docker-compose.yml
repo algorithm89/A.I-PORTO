@@ -1,0 +1,21 @@
+# ── Portainer — deploy separately from app code ──
+# Start:   docker compose up -d
+# Stop:    docker compose down
+# Logs:    docker logs ai-portainer -f
+# Access:  https://bublikstudios.net/portainer/ (via nginx reverse proxy)
+
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: ai-portainer
+    network_mode: host
+    command: --bind 127.0.0.1:9000 --base-url /portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    restart: unless-stopped
+
+volumes:
+  portainer_data:
+
+

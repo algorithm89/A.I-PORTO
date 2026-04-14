@@ -1,0 +1,55 @@
+# ── Deploy Portainer (manual trigger) ──
+name: Deploy Portainer
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy Portainer
+    runs-on: [self-hosted, Linux, X64]
+    environment: SKYNET
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy Portainer
+        run: |
+          set -e
+          DEPLOY_DIR="/home/bublik/bublik-portainer"
+
+          echo "🐳 Portainer — Deploy"
+          echo "====================="
+
+          # Ensure deploy directory exists
+          mkdir -p "$DEPLOY_DIR"
+
+          # Copy compose file
+          cp portainer/docker-compose.yml "$DEPLOY_DIR/docker-compose.yml"
+
+          cd "$DEPLOY_DIR"
+
+          # Remove stale container (prevents name conflicts)
+          echo "🧹 Cleaning up old container..."
+          docker rm -f ai-portainer 2>/dev/null || true
+
+          # Pull latest image & start
+          echo "🔄 Pulling latest Portainer image..."
+          docker compose pull
+
+          echo "🚀 Starting Portainer..."
+          docker compose up -d
+
+          # Verify
+          echo ""
+          echo "📦 Container status:"
+          docker compose ps
+
+          echo ""
+          echo "====================="
+          echo "✅ Portainer deployed!"
+          echo "   https://bublikstudios.net/portainer/"
+          echo "====================="
+
+
