@@ -69,10 +69,9 @@ public class VaultStartupLogger {
         return value != null && !value.equals("NOT_LOADED") && !value.isBlank();
     }
 
-    /** Show first 4 chars + masked remainder, or "NOT_LOADED" */
+    /** Show only that the secret was loaded + its length — never leak characters */
     private String mask(String value) {
         if (!isLoaded(value)) return "[X] NOT_LOADED";
-        if (value.length() <= 4) return "****";
-        return value.substring(0, 4) + "****" + " (" + value.length() + " chars)";
+        return "[OK] ******** (" + value.length() + " chars)";
     }
 }
