@@ -22,8 +22,8 @@ docker compose up -d
 echo ""
 echo "====================="
 echo "✅ Portainer is running!"
-echo "   Local:  http://localhost:9000/portainer/"
-echo "   Prod:   https://bublikstudios.net/portainer/"
+echo "   https://152.53.210.206:9443"
 echo "====================="
+
 
 

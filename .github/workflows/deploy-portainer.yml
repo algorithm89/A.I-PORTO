@@ -49,7 +49,7 @@ jobs:
           echo ""
           echo "====================="
           echo "✅ Portainer deployed!"
-          echo "   https://bublikstudios.net/portainer/"
+          echo "   https://152.53.210.206:9443"
           echo "====================="
 
 
