@@ -4,10 +4,10 @@ import TriGrid3D from '../components/TriGrid3D'
 import './TutorialsPage.css'
 
 const TUTORIALS = [
-  // ── Math & Foundations
+  // ── 1. Math for AI
   {
     id: 1,
-    track: 'Foundations',
+    track: 'Math for AI',
     color: 'cyan',
     emoji: '🧮',
     level: 'Beginner',
@@ -18,99 +18,134 @@ const TUTORIALS = [
   },
   {
     id: 2,
-    track: 'Foundations',
+    track: 'Math for AI',
     color: 'cyan',
     emoji: '📊',
     level: 'Beginner',
     title: 'Probability & Statistics for Machine Learning',
-    excerpt: 'Every ML model is making probabilistic guesses. This guide covers the distributions, Bayes theorem and intuitions you need without drowning in notation.',
+    excerpt: 'Every ML model is making probabilistic guesses. This guide covers distributions, Bayes theorem and the intuitions you need without drowning in notation.',
     duration: '15 min',
     tags: ['statistics', 'probability', 'math'],
   },
-  // ── Python & Tools
   {
     id: 3,
-    track: 'Python & Tools',
-    color: 'yellow',
-    emoji: '🐍',
-    level: 'Beginner',
-    title: 'Python for ML — What You Actually Need to Know',
-    excerpt: 'Skip the fluff. This covers NumPy, Pandas and Matplotlib with real examples. No toy demos — just the patterns you will use over and over.',
+    track: 'Math for AI',
+    color: 'cyan',
+    emoji: '📐',
+    level: 'Intermediate',
+    title: 'Calculus for Deep Learning — Gradients Made Simple',
+    excerpt: 'Backpropagation is just the chain rule. This tutorial walks through derivatives, partial derivatives and gradient descent with clear visual examples.',
     duration: '18 min',
-    tags: ['python', 'numpy', 'pandas'],
+    tags: ['calculus', 'gradients', 'deep learning'],
   },
+
+  // ── 2. Titanic ML Project
   {
     id: 4,
-    track: 'Python & Tools',
-    color: 'yellow',
-    emoji: '⚙️',
-    level: 'Intermediate',
-    title: 'Setting Up a Local ML Dev Environment',
-    excerpt: 'Virtual environments, Jupyter notebooks, GPU setup and version pinning. Get this right once and you will never fight your environment again.',
-    duration: '10 min',
-    tags: ['python', 'setup', 'tools'],
+    track: 'Titanic Project',
+    color: 'pink',
+    emoji: '🚢',
+    level: 'Beginner',
+    title: 'Titanic Survival Prediction — Your First Real ML Project',
+    excerpt: 'The classic Kaggle challenge. Load the data, explore it visually, clean missing values, and train your first classifier. Step by step, no shortcuts.',
+    duration: '25 min',
+    tags: ['titanic', 'kaggle', 'classification'],
   },
-  // ── Machine Learning
   {
     id: 5,
-    track: 'Machine Learning',
+    track: 'Titanic Project',
     color: 'pink',
-    emoji: '🤖',
+    emoji: '🔍',
     level: 'Beginner',
-    title: 'Your First ML Model — Predict House Prices',
-    excerpt: 'Train a real regression model with scikit-learn in under 20 lines. Understand what the model is actually doing under the hood, not just calling .fit().',
-    duration: '20 min',
-    tags: ['scikit-learn', 'regression', 'beginner'],
+    title: 'Titanic EDA — What the Data Actually Tells You',
+    excerpt: 'Before you train anything, look at the data. Survival by class, age, sex, fare — the patterns are fascinating and they guide every feature engineering decision.',
+    duration: '15 min',
+    tags: ['EDA', 'pandas', 'visualization'],
   },
   {
     id: 6,
-    track: 'Machine Learning',
+    track: 'Titanic Project',
     color: 'pink',
-    emoji: '🧠',
+    emoji: '🎯',
     level: 'Intermediate',
-    title: 'What is a Neural Network, Really?',
-    excerpt: 'No black boxes. We build one from scratch with just NumPy — forward pass, backprop, gradient descent. You will never fear the word "weights" again.',
-    duration: '25 min',
-    tags: ['neural network', 'numpy', 'deep learning'],
+    title: 'Titanic — Feature Engineering & Model Comparison',
+    excerpt: 'Go beyond the basics. Create new features from names, cabins and tickets. Compare Logistic Regression, Random Forest and XGBoost. See which one wins and why.',
+    duration: '30 min',
+    tags: ['feature engineering', 'xgboost', 'model comparison'],
   },
-  // ── MLOps
+
+  // ── 3. Biometric System
   {
     id: 7,
-    track: 'MLOps',
+    track: 'Biometric System',
     color: 'purple',
-    emoji: '🚀',
+    emoji: '🔐',
     level: 'Intermediate',
-    title: 'MLOps 101 — What It Is and Why It Matters',
-    excerpt: 'The gap between a notebook experiment and a production model is massive. MLOps is the discipline that bridges it. Here is a clear map of the landscape.',
-    duration: '14 min',
-    tags: ['mlops', 'production', 'overview'],
+    title: 'Building a Biometric Authentication System with Python',
+    excerpt: 'Face recognition, fingerprint matching, voice identification — how biometric systems actually work under the hood. We build one from scratch.',
+    duration: '35 min',
+    tags: ['biometrics', 'face recognition', 'security'],
   },
   {
     id: 8,
-    track: 'MLOps',
+    track: 'Biometric System',
     color: 'purple',
-    emoji: '📦',
+    emoji: '👁️',
     level: 'Intermediate',
-    title: 'Containerising Your ML Model with Docker',
-    excerpt: 'Package your model so it runs identically everywhere — local, cloud, CI/CD. Step-by-step Dockerfile walkthrough with a real scikit-learn model.',
-    duration: '22 min',
-    tags: ['docker', 'mlops', 'deployment'],
+    title: 'Face Detection & Recognition with OpenCV and dlib',
+    excerpt: 'Detect faces in real-time, extract embeddings, and match identities. A practical walkthrough using OpenCV, dlib and face_recognition library.',
+    duration: '28 min',
+    tags: ['opencv', 'face detection', 'dlib'],
   },
-  // ── Local AI
   {
     id: 9,
-    track: 'Local AI',
-    color: 'cyan',
-    emoji: '💻',
-    level: 'Beginner',
-    title: 'Run Your Own AI Locally with Ollama',
-    excerpt: 'No API keys, no cloud costs, no data leaving your machine. Install Ollama, pull Llama 3, and have a local LLM running in under 10 minutes.',
-    duration: '8 min',
-    tags: ['ollama', 'local AI', 'llm'],
+    track: 'Biometric System',
+    color: 'purple',
+    emoji: '🏗️',
+    level: 'Advanced',
+    title: 'Deploying a Biometric API with FastAPI & Docker',
+    excerpt: 'Turn your biometric model into a production-ready REST API. Authentication flow, image upload, matching endpoint — containerised and ready to ship.',
+    duration: '40 min',
+    tags: ['fastapi', 'docker', 'deployment'],
+  },
+
+  // ── 4. Accountability Bot (Twilio + GPT)
+  {
+    id: 10,
+    track: 'Accountability Bot',
+    color: 'yellow',
+    emoji: '📱',
+    level: 'Intermediate',
+    title: 'Build an Accountability Bot with Twilio & GPT',
+    excerpt: 'A WhatsApp bot that checks in on you daily, tracks your goals, and uses GPT to give you personalised encouragement. The ultimate AI accountability partner.',
+    duration: '35 min',
+    tags: ['twilio', 'gpt', 'whatsapp'],
+  },
+  {
+    id: 11,
+    track: 'Accountability Bot',
+    color: 'yellow',
+    emoji: '🤖',
+    level: 'Intermediate',
+    title: 'Integrating OpenAI GPT for Smart Conversations',
+    excerpt: 'Connect your bot to GPT-4. Craft system prompts that make it an encouraging coach — not just a chatbot. Handle context, memory and conversation flow.',
+    duration: '25 min',
+    tags: ['openai', 'prompt engineering', 'chatbot'],
+  },
+  {
+    id: 12,
+    track: 'Accountability Bot',
+    color: 'yellow',
+    emoji: '🚀',
+    level: 'Advanced',
+    title: 'Deploying Your Twilio Bot to Production',
+    excerpt: 'Webhooks, ngrok for testing, then deploy to a real server. Add scheduled messages, goal tracking database, and weekly progress reports via WhatsApp.',
+    duration: '30 min',
+    tags: ['deployment', 'webhooks', 'scheduling'],
   },
 ]
 
-const TRACKS = ['All', 'Foundations', 'Python & Tools', 'Machine Learning', 'MLOps', 'Local AI']
+const TRACKS = ['All', 'Math for AI', 'Titanic Project', 'Biometric System', 'Accountability Bot']
 const LEVELS  = ['All Levels', 'Beginner', 'Intermediate', 'Advanced']
 
 export default function TutorialsPage() {
@@ -136,8 +171,8 @@ export default function TutorialsPage() {
             <span className="gradient-text">the gatekeeping</span>
           </h1>
           <p className="tut-hero-sub">
-            Honest, practical guides — from the absolute basics of maths right through to
-            deploying ML models in production. No fluff, no imposter syndrome required.
+            From the math foundations to real-world projects — Titanic predictions,
+            biometric systems and an AI accountability bot. No fluff, no imposter syndrome required.
           </p>
           <div className="tut-stats">
             <div className="tut-stat"><span className="tut-stat-num">{TUTORIALS.length}</span><span className="tut-stat-label">Tutorials</span></div>

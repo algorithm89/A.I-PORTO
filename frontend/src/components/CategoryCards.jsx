@@ -3,6 +3,7 @@ import './CategoryCards.css'
 import picAbout     from '../assets/PIC4.png'
 import picTutorials from '../assets/PIC8.jpg'
 import picBlog      from '../assets/PIC9.jpg'
+import picCartoons  from '../assets/PIC10.png'
 
 const CATEGORIES = [
   {
@@ -11,7 +12,7 @@ const CATEGORIES = [
     title: 'About',
     desc: 'Who is behind BublikStudios? A curious mind at the intersection of technology, creativity and self-discovery. Come say hi.',
     label: 'Get to know me',
-    href: '/#about',
+    to: '/about',
     img: picAbout,
   },
   {
@@ -26,6 +27,15 @@ const CATEGORIES = [
   {
     id: 3,
     color: 'yellow',
+    title: 'Cartoon Blog',
+    desc: 'Reviews, deep dives and love letters to the best animated shows and films ever made.',
+    label: 'Read cartoons',
+    to: '/cartoons',
+    img: picCartoons,
+  },
+  {
+    id: 4,
+    color: 'purple',
     title: 'Inner Compass Blog',
     desc: 'Reflections on mindset, growth and finding direction. Writing from the heart about the inner journey that runs alongside the tech one.',
     label: 'Read the blog',
@@ -57,10 +67,7 @@ function CategoryCards() {
               <div className="cat-body">
                 <span className={`cat-badge cat-badge-${cat.color}`}>{cat.title}</span>
                 <p className="cat-desc">{cat.desc}</p>
-                {cat.to
-                  ? <Link to={cat.to} className={`cat-btn cat-btn-${cat.color}`}>{cat.label} →</Link>
-                  : <a href={cat.href} className={`cat-btn cat-btn-${cat.color}`}>{cat.label} →</a>
-                }
+                <Link to={cat.to} className={`cat-btn cat-btn-${cat.color}`}>{cat.label} →</Link>
               </div>
 
             </div>

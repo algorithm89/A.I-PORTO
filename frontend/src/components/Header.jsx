@@ -88,8 +88,8 @@ function Header() {
             <Link to="/"           className={nav('/')}            onClick={close}>Home</Link>
             <Link to="/blog"       className={nav('/blog')}        onClick={close}>Blog</Link>
             <Link to="/tutorials"  className={nav('/tutorials')}   onClick={close}>Tutorials</Link>
-            <a    href="#shop"     className="nav-link"            onClick={close}>Shop</a>
-            <a    href="#about"    className="nav-link"            onClick={close}>About</a>
+            <Link to="/cartoons"   className={nav('/cartoons')}    onClick={close}>Cartoons</Link>
+            <Link to="/about"      className={nav('/about')}       onClick={close}>About</Link>
 
             <div className="nav-auth">
               {user ? (

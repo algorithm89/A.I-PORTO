@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import './StoriesSection.css'
 import TronGrid from './TronGrid'
 import pic8  from '../assets/PIC8.jpg'
@@ -9,10 +10,10 @@ import pic10 from '../assets/PIC10.png'
 
 function StoriesSection() {
   const cards = [
-    { id:1, tag:'AI & MLOps',  color:'cyan',   icon:'🤖', title:'MLOps / A.I Tutorials',  desc:'Deep dives into machine learning pipelines, models, and real-world AI you can actually use.', img:pic8,  imgPos:'center 15%' },
-    { id:2, tag:'About Me',    color:'pink',   icon:'✨', title:'About Me',                desc:'The story behind BublikStudios — math, cartoons, code and a love for learning.', img:pic4,  imgPos:'center 10%' },
-    { id:3, tag:'Inner Compass',color:'purple', icon:'🧭', title:'Inner Compass Blog',     desc:'Personal reflections on growth, creativity and navigating life with curiosity.', img:pic7,  imgPos:'center 10%' },
-    { id:4, tag:'Cartoon Blog', color:'yellow', icon:'🎨', title:'Cartoon Blog', desc:'Hand-drawn stories and illustrated posts — where imagination runs the show.', img:pic10, imgPos:'center 70%' },
+    { id:1, tag:'AI & MLOps',  color:'cyan',   icon:'🤖', title:'MLOps / A.I Tutorials',  desc:'Deep dives into machine learning pipelines, models, and real-world AI you can actually use.', img:pic8,  imgPos:'center 15%', to:'/tutorials' },
+    { id:2, tag:'About Me',    color:'pink',   icon:'✨', title:'About Me',                desc:'The story behind BublikStudios — math, cartoons, code and a love for learning.', img:pic4,  imgPos:'center 10%', to:'/about' },
+    { id:3, tag:'Inner Compass',color:'purple', icon:'🧭', title:'Inner Compass Blog',     desc:'Personal reflections on growth, creativity and navigating life with curiosity.', img:pic7,  imgPos:'center 10%', to:'/blog' },
+    { id:4, tag:'Cartoon Blog', color:'yellow', icon:'🎨', title:'Cartoon Blog', desc:'Hand-drawn stories and illustrated posts — where imagination runs the show.', img:pic10, imgPos:'center 70%', to:'/cartoons' },
   ]
 
   return (
@@ -35,7 +36,7 @@ function StoriesSection() {
               </div>
               <div className="ex-body">
                 <p className="ex-desc">{c.desc}</p>
-                <a href="#" className="ex-link">Explore →</a>
+                <Link to={c.to} className="ex-link">Explore →</Link>
               </div>
             </div>
           ))}
