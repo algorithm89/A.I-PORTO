@@ -29,7 +29,7 @@ function StoriesSection() {
           {cards.map(c => (
             <div key={c.id} className={`ex-card ex-${c.color}`}>
               <div className="ex-img-wrap">
-                <img src={c.img} alt={c.title} className="ex-img" style={{objectPosition: c.imgPos}} />
+                <img src={c.img} alt={c.title} className="ex-img" loading="lazy" style={{objectPosition: c.imgPos}} />
                 <div className="ex-img-overlay">
                   <h3 className="ex-img-title">{c.title}</h3>
                 </div>

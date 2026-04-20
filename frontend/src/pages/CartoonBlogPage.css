@@ -187,6 +187,27 @@
   letter-spacing: -0.5px;
 }
 
+/* ── Empty state ── */
+.cartoon-empty {
+  text-align: center;
+  padding: 5rem 1rem;
+}
+.cartoon-empty-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+.cartoon-empty h2 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+.cartoon-empty p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
 /* ── Responsive ── */
 @media (max-width: 960px) {
   .cartoon-grid { grid-template-columns: 1fr 1fr; }

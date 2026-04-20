@@ -36,7 +36,7 @@ function CartoonBelt() {
           {FAVOURITES.map((f, i) => (
             <div key={i} className="belt-card">
               <div className="belt-img-wrap">
-                <img src={f.img} alt={f.name} className="belt-img" />
+                <img src={f.img} alt={f.name} className="belt-img" loading="lazy" />
                 <div className="belt-overlay">
                   <span className="belt-emoji">{f.emoji}</span>
                 </div>
