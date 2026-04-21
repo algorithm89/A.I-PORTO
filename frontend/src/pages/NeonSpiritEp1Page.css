@@ -1,0 +1,133 @@
+/* ══════════════════════════════
+   NEON SPIRIT EPISODE READER
+══════════════════════════════ */
+.ns-page {
+  position: relative;
+  min-height: 100vh;
+  padding-bottom: 5rem;
+}
+
+/* ── Back nav ── */
+.ns-back {
+  position: relative;
+  z-index: 1;
+  padding-top: 2rem;
+}
+.ns-back-link {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--neon-yellow);
+  text-decoration: none;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+.ns-back-link:hover { opacity: 1; }
+
+/* ── Cover image ── */
+.ns-cover {
+  position: relative;
+  z-index: 1;
+  padding-top: 2rem;
+  max-width: 780px;
+}
+.ns-cover-img {
+  width: 100%;
+  max-height: 380px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 16px;
+  border: 1px solid rgba(255,230,0,0.2);
+  display: block;
+}
+
+/* ── Header ── */
+.ns-header {
+  position: relative;
+  z-index: 1;
+  padding: 2rem 0 1.5rem;
+  max-width: 780px;
+}
+.ns-title {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 900;
+  letter-spacing: -1.5px;
+  line-height: 1.1;
+  color: var(--text-primary);
+  margin: 1rem 0 1rem;
+}
+.ns-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+.ns-dot { opacity: 0.35; }
+.ns-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.ns-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.15rem 0.55rem;
+  border-radius: 100px;
+  background: rgba(255,230,0,0.07);
+  color: var(--neon-yellow);
+  border: 1px solid rgba(255,230,0,0.22);
+}
+
+/* ── Body ── */
+.ns-body {
+  position: relative;
+  z-index: 1;
+  max-width: 780px;
+  padding-top: 1rem;
+}
+.ns-chapter-title {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--neon-yellow);
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid rgba(255,230,0,0.18);
+  margin-bottom: 1.5rem;
+}
+
+/* ── Script placeholder ── */
+.ns-script-placeholder {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+.ns-script-placeholder span { font-size: 2.5rem; }
+.ns-script-placeholder p { font-size: 1rem; }
+
+/* ── Script prose (used when you add real content) ── */
+.ns-prose {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.9;
+  margin-bottom: 1.2rem;
+}
+
+/* ── Footer ── */
+.ns-footer-nav {
+  position: relative;
+  z-index: 1;
+  padding-top: 2rem;
+  max-width: 780px;
+}
+
+@media (max-width: 600px) {
+  .ns-cover-img { max-height: 220px; }
+  .ns-title { letter-spacing: -1px; }
+}
