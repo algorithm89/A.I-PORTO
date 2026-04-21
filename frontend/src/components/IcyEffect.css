@@ -5,6 +5,7 @@
   line-height: 0;
   border-radius: 18px;
   overflow: hidden;
+  cursor: crosshair;
 }
 
 .icy-img {
@@ -24,4 +25,5 @@
   border-radius: 18px;
   pointer-events: none;
 }
+
 
