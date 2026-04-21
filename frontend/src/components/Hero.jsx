@@ -1,8 +1,8 @@
 import './Hero.css'
-import TronGrid    from './TronGrid'
-import WaterRipple from './WaterRipple'
+import TronGrid   from './TronGrid'
+import IcyEffect  from './IcyEffect'
 import logo  from '../assets/LOGO.png'
-import pic25 from '../assets/PIC25.png'
+import polar from '../assets/POLAR.png'
 
 function Hero() {
   return (
@@ -50,10 +50,10 @@ function Hero() {
           </div>
         </div>
 
-        {/* ── RIGHT — PIC25 with water ripple ── */}
+        {/* ── RIGHT — POLAR with icy effect ── */}
         <div className="hero-right">
           <div className="hero-img-wrap">
-            <WaterRipple src={pic25} alt="BublikStudios banner" className="hero-banner-canvas" />
+            <IcyEffect src={polar} alt="BublikStudios banner" className="hero-banner-canvas" />
           </div>
         </div>
 
