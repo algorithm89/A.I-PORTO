@@ -104,7 +104,7 @@ jobs:
       - name: Show status
         run: |
           echo "=== Container Status ==="
-          docker compose -f docker-compose.prod.yml ps
+          docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}"
           echo ""
           echo "=== Grafana Stack ==="
           docker compose -f grafana/docker-compose.yml ps
