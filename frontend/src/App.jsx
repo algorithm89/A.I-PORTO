@@ -11,6 +11,7 @@ import ChatBot          from './components/ChatBot'
 import BlogPage         from './pages/BlogPage'
 import TutorialsPage    from './pages/TutorialsPage'
 import CartoonBlogPage  from './pages/CartoonBlogPage'
+import NeonSpiritEp1Page from './pages/NeonSpiritEp1Page'
 import AboutPage        from './pages/AboutPage'
 
 function HomePage() {
@@ -33,8 +34,9 @@ function App() {
         <Route path="/"           element={<HomePage />} />
         <Route path="/blog"       element={<BlogPage />} />
         <Route path="/tutorials"  element={<TutorialsPage />} />
-        <Route path="/cartoons"   element={<CartoonBlogPage />} />
-        <Route path="/about"      element={<AboutPage />} />
+        <Route path="/cartoons"                   element={<CartoonBlogPage />} />
+        <Route path="/cartoons/neon-spirit/ep1"   element={<NeonSpiritEp1Page />} />
+        <Route path="/about"                      element={<AboutPage />} />
       </Routes>
       <Footer />
       <ChatBot />
