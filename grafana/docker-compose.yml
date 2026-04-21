@@ -25,8 +25,6 @@ services:
       GF_SERVER_HTTP_PORT: "3100"
       # Disable signup, you'll create admin on first launch
       GF_USERS_ALLOW_SIGN_UP: "false"
-      # Auto-provision Loki as a datasource
-      GF_DATASOURCES_DEFAULT_NAME: "Loki"
     volumes:
       - grafana_data:/var/lib/grafana
       - ./provisioning:/etc/grafana/provisioning:ro
@@ -37,4 +35,5 @@ services:
 volumes:
   loki_data:
   grafana_data:
+
 
