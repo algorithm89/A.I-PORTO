@@ -89,10 +89,15 @@ jobs:
         if: needs.changes.outputs.infra == 'true' && github.event_name != 'workflow_dispatch'
         run: docker compose -f docker-compose.prod.yml restart nginx
 
-      # ── Grafana + Loki ──
-      - name: Deploy Grafana + Loki
+      # ── Grafana + Loki + Prometheus + cAdvisor + Node Exporter ──
+      # Always ensure the stack is up (pull new images if grafana files changed)
+      - name: Deploy Grafana stack
         if: needs.changes.outputs.grafana == 'true' || github.event.inputs.deploy_all == 'true'
-        run: docker compose -f grafana/docker-compose.yml up -d
+        run: docker compose -f grafana/docker-compose.yml pull && docker compose -f grafana/docker-compose.yml up -d
+
+      - name: Ensure Grafana stack is running
+        if: needs.changes.outputs.grafana != 'true' && github.event.inputs.deploy_all != 'true'
+        run: docker compose -f grafana/docker-compose.yml up -d --no-recreate
 
       - name: Wait for startup
         run: sleep 10
