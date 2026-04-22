@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- ═══════════════════════════════════════════
+         Import Spring Boot's default logging config
+         (colours, patterns, etc.)
+    ═══════════════════════════════════════════════ -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <springProperty scope="context" name="APP_NAME"     source="spring.application.name" defaultValue="ai-backend"/>
+    <springProperty scope="context" name="LOKI_URL"     source="loki.url"                defaultValue="http://127.0.0.1:3200"/>
+    <springProperty scope="context" name="ACTIVE_PROFILE" source="spring.profiles.active" defaultValue="default"/>
+
+    <!-- ═══════════════════════════════════════════
+         CONSOLE — always on, coloured
+    ═══════════════════════════════════════════════ -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSS'Z', UTC} %highlight(%-5level) [%thread] %cyan(%logger{36}) : %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- ═══════════════════════════════════════════
+         LOKI — structured, with labels
+    ═══════════════════════════════════════════════ -->
+    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+
+        <!-- where to push logs -->
+        <http>
+            <url>${LOKI_URL}/loki/api/v1/push</url>
+            <connectionTimeoutMs>5000</connectionTimeoutMs>
+            <requestTimeoutMs>10000</requestTimeoutMs>
+        </http>
+
+        <format>
+            <!-- labels that appear as selectors in Grafana -->
+            <label>
+                <pattern>app=${APP_NAME},profile=${ACTIVE_PROFILE},level=%level,logger=%logger{20}</pattern>
+            </label>
+
+            <!-- the actual log line stored in Loki -->
+            <message>
+                <pattern>level=%level logger=%logger{36} thread=%thread user=%X{user:-anonymous} traceId=%X{traceId:-none} | %msg%n%ex</pattern>
+            </message>
+
+            <!-- order by log timestamp, not push time -->
+            <sortByTime>true</sortByTime>
+        </format>
+
+        <!-- buffer: send in batches, max wait 1 s -->
+        <batchMaxItems>100</batchMaxItems>
+        <batchTimeoutMs>1000</batchTimeoutMs>
+
+        <!-- don't crash the app if Loki is down -->
+        <dropRatioOnDiscard>0</dropRatioOnDiscard>
+        <verbose>false</verbose>
+    </appender>
+
+    <!-- ═══════════════════════════════════════════
+         ASYNC wrapper for Loki (non-blocking)
+    ═══════════════════════════════════════════════ -->
+    <appender name="LOKI_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="LOKI"/>
+        <queueSize>10000</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <neverBlock>true</neverBlock>
+    </appender>
+
+    <!-- ═══════════════════════════════════════════
+         SILENCE noisy libraries
+    ═══════════════════════════════════════════════ -->
+    <logger name="org.hibernate.SQL"                         level="WARN"/>
+    <logger name="org.hibernate.orm.jdbc.bind"               level="WARN"/>
+    <logger name="com.zaxxer.hikari"                         level="WARN"/>
+    <logger name="org.springframework.web.servlet.mvc"       level="WARN"/>
+    <logger name="org.springframework.security"              level="WARN"/>
+    <logger name="com.github.loki4j"                         level="WARN"/>
+
+    <!-- ═══════════════════════════════════════════
+         YOUR APP — always DEBUG so you see everything
+    ═══════════════════════════════════════════════ -->
+    <logger name="org.crypto.aiproject" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="LOKI_ASYNC"/>
+    </logger>
+
+    <!-- ═══════════════════════════════════════════
+         ROOT — INFO for everything else
+    ═══════════════════════════════════════════════ -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="LOKI_ASYNC"/>
+    </root>
+
+</configuration>
+

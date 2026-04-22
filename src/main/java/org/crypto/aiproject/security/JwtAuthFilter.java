@@ -1,5 +1,6 @@
 package org.crypto.aiproject.security;
 
+import org.slf4j.MDC;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -58,6 +59,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(user, null, authorities);
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+                MDC.put("user", username);
                 log.debug("JWT auth OK | user={} role={} uri={}", username, user.getRole(), uri);
             } else {
                 log.warn("JWT auth FAIL | user={} not found in DB | uri={}", username, uri);
@@ -66,6 +68,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             log.warn("JWT auth FAIL | invalid/expired token | uri={}", uri);
         }
 
-        filterChain.doFilter(request, response);
+        try {
+            filterChain.doFilter(request, response);
+        } finally {
+            MDC.remove("user");   // always clear after request
+        }
     }
 }
