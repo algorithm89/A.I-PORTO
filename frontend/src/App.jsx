@@ -8,6 +8,7 @@ import AISection        from './components/AISection'
 import CategoryCards    from './components/CategoryCards'
 import Footer           from './components/Footer'
 import ChatBot          from './components/ChatBot'
+import ScrollToTop      from './components/ScrollToTop'
 import BlogPage         from './pages/BlogPage'
 import TutorialsPage    from './pages/TutorialsPage'
 import CartoonBlogPage  from './pages/CartoonBlogPage'
@@ -29,6 +30,7 @@ function HomePage() {
 function App() {
   return (
     <div className="app">
+      <ScrollToTop />
       <Header />
       <Routes>
         <Route path="/"           element={<HomePage />} />
