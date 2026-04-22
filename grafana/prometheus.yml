@@ -1,0 +1,27 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+
+  # ── Server CPU / RAM / disk / network ──
+  - job_name: node
+    static_configs:
+      - targets: ['127.0.0.1:9100']
+
+  # ── Docker container metrics ──
+  - job_name: cadvisor
+    static_configs:
+      - targets: ['127.0.0.1:9101']
+
+  # ── Spring Boot (actuator metrics) ──
+  - job_name: spring-boot
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['127.0.0.1:8080']
+
+  # ── Prometheus itself ──
+  - job_name: prometheus
+    static_configs:
+      - targets: ['127.0.0.1:9090']
+

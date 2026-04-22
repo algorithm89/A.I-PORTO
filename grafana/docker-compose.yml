@@ -1,9 +1,10 @@
-# ── Grafana + Loki (deployed separately) ──
+# ── Grafana + Loki + Prometheus + Node Exporter + cAdvisor ──
 # Start:   docker compose -f grafana/docker-compose.yml up -d
 # Logs:    docker compose -f grafana/docker-compose.yml logs -f
 
 services:
 
+  # ── Logs ──────────────────────────────────────────
   loki:
     image: grafana/loki:3.5.0
     container_name: ai-loki
@@ -14,26 +15,70 @@ services:
       - loki_data:/loki
     restart: unless-stopped
 
+  # ── Metrics collector ─────────────────────────────
+  prometheus:
+    image: prom/prometheus:v3.3.1
+    container_name: ai-prometheus
+    network_mode: host
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=15d
+      - --web.listen-address=127.0.0.1:9090
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    restart: unless-stopped
+
+  # ── Server metrics (CPU / RAM / disk / network) ───
+  node-exporter:
+    image: prom/node-exporter:v1.9.1
+    container_name: ai-node-exporter
+    network_mode: host
+    command:
+      - --web.listen-address=127.0.0.1:9100
+      - --path.rootfs=/host
+    volumes:
+      - /:/host:ro,rslave
+    pid: host
+    restart: unless-stopped
+
+  # ── Container metrics (CPU / RAM per container) ───
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.52.1
+    container_name: ai-cadvisor
+    network_mode: host
+    command:
+      - --port=9101
+      - --listen_ip=127.0.0.1
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    privileged: true
+    restart: unless-stopped
+
+  # ── Dashboard UI ──────────────────────────────────
   grafana:
     image: grafana/grafana:11.6.0
     container_name: ai-grafana
     network_mode: host
     environment:
-      # Serve behind /grafana sub-path
       GF_SERVER_ROOT_URL: "https://bublikstudios.net/grafana/"
       GF_SERVER_SERVE_FROM_SUB_PATH: "true"
       GF_SERVER_HTTP_PORT: "3100"
-      # Disable signup, you'll create admin on first launch
       GF_USERS_ALLOW_SIGN_UP: "false"
     volumes:
       - grafana_data:/var/lib/grafana
       - ./provisioning:/etc/grafana/provisioning:ro
     depends_on:
       - loki
+      - prometheus
     restart: unless-stopped
 
 volumes:
   loki_data:
+  prometheus_data:
   grafana_data:
-
-
