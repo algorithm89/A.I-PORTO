@@ -51,6 +51,10 @@ services:
     command:
       - --port=9101
       - --listen_ip=127.0.0.1
+      - --disable_metrics=tcp,udp,advtcp,hugetlb,sched,process,referenced_memory,cpu_topology,resctrl
+      - --housekeeping_interval=10s
+      - --max_housekeeping_interval=15s
+      - --allow_dynamic_housekeeping=true
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
@@ -58,6 +62,12 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
       - /dev/disk/:/dev/disk:ro
     privileged: true
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:9101/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     restart: unless-stopped
 
   # ── Dashboard UI ──────────────────────────────────
