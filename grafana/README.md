@@ -38,12 +38,44 @@ cd ~/A.I-PORTO && docker compose -f docker-compose.prod.yml up -d
 - URL: `https://bublikstudios.net/grafana/`
 - Default credentials: `admin` / `admin` (you'll be prompted to change on first login)
 
-## View logs
-1. Go to Grafana → Explore
-2. Select **Loki** datasource
-3. Use LogQL queries like:
-   - `{container_name="ai-backend"}` — Spring Boot logs
-   - `{container_name="ai-frontend"}` — Frontend nginx logs
-   - `{container_name="ai-ollama"}` — Ollama logs
-   - `{container_name=~"ai-.*"}` — All your containers
+## Datasources (auto-provisioned)
+Both datasources are wired up automatically on startup — no manual setup needed:
+
+| Datasource | URL | What it collects |
+|---|---|---|
+| **Prometheus** | `127.0.0.1:9090` | Metrics from Node Exporter, cAdvisor, Spring Boot |
+| **Loki** | `127.0.0.1:3200` | Logs from Spring Boot (via Logback appender) |
+
+## Dashboards — run once on server
+```bash
+cd ~/A.I-PORTO
+bash grafana/download-dashboards.sh
+```
+
+This downloads and installs 4 dashboards automatically:
+
+| Dashboard | What it shows |
+|---|---|
+| **Node Exporter Full** | Server CPU, RAM, disk, network |
+| **cAdvisor** | Per-container CPU, RAM, restarts |
+| **Spring Boot JVM** | Heap, HTTP requests, DB pool, GC |
+| **Loki Logs** | All Spring Boot logs with filters |
+
+## View logs in Loki (Explore tab)
+```
+# All Spring Boot logs
+{app="ai-backend"}
+
+# Errors only
+{app="ai-backend", level="ERROR"}
+
+# Specific user's requests
+{app="ai-backend"} |= "user=admin"
+
+# Auth failures
+{app="ai-backend", level="WARN"} |= "JWT auth FAIL"
+
+# Chat service
+{app="ai-backend", logger="o.crypto.aiproject.service.ChatService"}
+```
 
