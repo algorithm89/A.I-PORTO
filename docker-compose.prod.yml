@@ -1,5 +1,5 @@
 # ── Production docker-compose (Linux server) ──
-I wil# Code:          backend, frontend, nginx (rebuilt on deploy)
+# Code:           backend, frontend, nginx (rebuilt on deploy)
 # Portainer:     see portainer/docker-compose.yml (deployed separately)
 #
 # Deploy code only:  docker compose -f docker-compose.prod.yml up --build -d --no-deps backend frontend && docker compose -f docker-compose.prod.yml restart nginx
