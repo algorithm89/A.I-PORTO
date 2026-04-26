@@ -27,7 +27,7 @@ public class ChatService {
     private final String guestSystemPrompt;
 
     public ChatService(
-            @Value("${openai.api-key}") String apiKey,
+            @Value("${openai.api-key:}") String apiKey,
             @Value("${openai.model:gpt-4o-mini}") String model,
             @Value("${openai.system-prompt:You are a helpful AI assistant for BublikStudios that knows about animation and story telling.}") String systemPrompt
     ) {
@@ -42,6 +42,9 @@ public class ChatService {
                 + "Gently encourage them to create a free account to get the full experience. "
                 + "You can still help them, but remind them that members get more features.";
         log.info("ChatService initialized | provider=OpenAI model={}", model);
+        if (apiKey == null || apiKey.isBlank()) {
+            log.warn("ChatService: openai.api-key is NOT set — chat will fail until key is added to Vault!");
+        }
     }
 
     /**
