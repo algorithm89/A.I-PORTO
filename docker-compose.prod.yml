@@ -1,32 +1,10 @@
 # ── Production docker-compose (Linux server) ──
-# Infrastructure: ollama (always running, don't rebuild)
-# Code:          backend, frontend, nginx (rebuilt on deploy)
+I wil# Code:          backend, frontend, nginx (rebuilt on deploy)
 # Portainer:     see portainer/docker-compose.yml (deployed separately)
 #
 # Deploy code only:  docker compose -f docker-compose.prod.yml up --build -d --no-deps backend frontend && docker compose -f docker-compose.prod.yml restart nginx
-# Start infra once:  docker compose -f docker-compose.prod.yml up -d ollama
 
 services:
-
-  # ═══════════════════════════════════
-  # INFRASTRUCTURE (start once, leave running)
-  # ═══════════════════════════════════
-
-  ollama:
-    image: ollama/ollama:latest
-    container_name: ai-ollama
-    network_mode: host
-    environment:
-      OLLAMA_HOST: "127.0.0.1:11434"
-    volumes:
-      - ollama_data:/root/.ollama
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "ollama", "list"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 15s
 
   # ═══════════════════════════════════
   # CODE (rebuilt on every deploy)
@@ -57,7 +35,3 @@ services:
       - backend
       - frontend
     restart: unless-stopped
-
-volumes:
-  ollama_data:
-

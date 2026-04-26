@@ -6,6 +6,7 @@ import org.crypto.aiproject.dto.ChatRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -26,12 +27,13 @@ public class ChatService {
     private final String guestSystemPrompt;
 
     public ChatService(
-            @Value("${ollama.base-url:http://127.0.0.1:11434}") String ollamaBaseUrl,
-            @Value("${ollama.model:llama3.2:3b}") String model,
-            @Value("${ollama.system-prompt:You are a helpful AI assistant for BublikStudios.}") String systemPrompt
+            @Value("${openai.api-key}") String apiKey,
+            @Value("${openai.model:gpt-4o-mini}") String model,
+            @Value("${openai.system-prompt:You are a helpful AI assistant for BublikStudios that knows about animation and story telling.}") String systemPrompt
     ) {
         this.webClient = WebClient.builder()
-                .baseUrl(ollamaBaseUrl)
+                .baseUrl("https://api.openai.com")
+                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
                 .build();
         this.model = model;
         this.systemPrompt = systemPrompt;
@@ -39,21 +41,19 @@ public class ChatService {
                 + " The user is a guest visitor (not logged in). Welcome them warmly to BublikStudios! "
                 + "Gently encourage them to create a free account to get the full experience. "
                 + "You can still help them, but remind them that members get more features.";
-        log.info("ChatService initialized | ollama={} model={}", ollamaBaseUrl, model);
+        log.info("ChatService initialized | provider=OpenAI model={}", model);
     }
 
     /**
-     * Stream a chat response from Ollama.
+     * Stream a chat response from OpenAI.
      * Returns a Flux of text chunks (token by token).
      */
     public Flux<String> streamChat(String username, boolean loggedIn, ChatRequest request) {
         log.info("CHAT request | user={} loggedIn={} message={}", username, loggedIn,
                 request.getMessage().substring(0, Math.min(80, request.getMessage().length())));
 
-        // Pick system prompt based on login status
         String prompt = loggedIn ? systemPrompt : guestSystemPrompt;
 
-        // Build message list: system + history + current message
         List<Map<String, String>> messages = new ArrayList<>();
         messages.add(Map.of("role", "system", "content", prompt));
 
@@ -71,17 +71,24 @@ public class ChatService {
         );
 
         return webClient.post()
-                .uri("/api/chat")
+                .uri("/v1/chat/completions")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(body)
                 .retrieve()
                 .bodyToFlux(String.class)
                 .mapNotNull(chunk -> {
+                    // OpenAI sends "data: [DONE]" at end
+                    if ("[DONE]".equals(chunk.trim()) || chunk.trim().equals("data: [DONE]")) {
+                        return null;
+                    }
+                    // Strip "data: " prefix
+                    String data = chunk.startsWith("data: ") ? chunk.substring(6).trim() : chunk.trim();
+                    if (data.isEmpty()) return null;
                     try {
-                        JsonNode node = objectMapper.readTree(chunk);
-                        JsonNode messageNode = node.path("message").path("content");
-                        if (!messageNode.isMissingNode()) {
-                            return messageNode.asText();
+                        JsonNode node = objectMapper.readTree(data);
+                        JsonNode content = node.path("choices").path(0).path("delta").path("content");
+                        if (!content.isMissingNode() && !content.isNull()) {
+                            return content.asText();
                         }
                     } catch (Exception e) {
                         log.debug("Skipping non-JSON chunk: {}", chunk);

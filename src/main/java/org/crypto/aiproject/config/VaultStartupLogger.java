@@ -38,6 +38,9 @@ public class VaultStartupLogger {
     @Value("${mailtrap.token:NOT_LOADED}")
     private String mailtrapToken;
 
+    @Value("${openai.api-key:NOT_LOADED}")
+    private String openaiApiKey;
+
     @EventListener(ApplicationReadyEvent.class)
     public void logVaultStatus() {
         log.info("========================================================");
@@ -51,9 +54,10 @@ public class VaultStartupLogger {
         log.info("  jwt.secret      : {}", mask(jwtSecret));
         log.info("  db.password     : {}", mask(dbPassword));
         log.info("  mailtrap.token  : {}", mask(mailtrapToken));
+        log.info("  openai.api-key  : {}", mask(openaiApiKey));
         log.info("--------------------------------------------------------");
 
-        boolean allLoaded = isLoaded(jwtSecret) && isLoaded(dbPassword) && isLoaded(mailtrapToken);
+        boolean allLoaded = isLoaded(jwtSecret) && isLoaded(dbPassword) && isLoaded(mailtrapToken) && isLoaded(openaiApiKey);
         if (allLoaded) {
             log.info("  [OK] All Vault secrets loaded successfully");
         } else {
@@ -61,6 +65,7 @@ public class VaultStartupLogger {
             if (!isLoaded(jwtSecret))     log.warn("    [X] jwt.secret - NOT loaded from Vault");
             if (!isLoaded(dbPassword))    log.warn("    [X] spring.datasource.password - NOT loaded");
             if (!isLoaded(mailtrapToken)) log.warn("    [X] mailtrap.token - NOT loaded from Vault");
+            if (!isLoaded(openaiApiKey))  log.warn("    [X] openai.api-key - NOT loaded from Vault");
         }
         log.info("========================================================");
     }
