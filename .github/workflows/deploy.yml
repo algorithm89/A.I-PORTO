@@ -64,7 +64,6 @@ jobs:
       - name: Create .env
         run: |
           echo "VAULT_TOKEN=${{ secrets.VAULT_TOKEN }}" > .env
-          echo "GRAFANA_ADMIN_PASSWORD=${{ secrets.GRAFANA_ADMIN_PASSWORD }}" >> .env
 
       - name: Build Backend
         if: needs.changes.outputs.backend == 'true' || github.event.inputs.deploy_all == 'true'
@@ -90,15 +89,10 @@ jobs:
         if: needs.changes.outputs.infra == 'true' && github.event_name != 'workflow_dispatch'
         run: docker compose -f docker-compose.prod.yml restart nginx
 
-      # ── Grafana + Loki + Prometheus + cAdvisor + Node Exporter ──
-      # Always ensure the stack is up (pull new images if grafana files changed)
-      - name: Deploy Grafana stack
+      # ── Grafana + Loki ──
+      - name: Deploy Grafana + Loki
         if: needs.changes.outputs.grafana == 'true' || github.event.inputs.deploy_all == 'true'
-        run: docker compose -f grafana/docker-compose.yml pull && docker compose -f grafana/docker-compose.yml up -d
-
-      - name: Ensure Grafana stack is running
-        if: needs.changes.outputs.grafana != 'true' && github.event.inputs.deploy_all != 'true'
-        run: docker compose -f grafana/docker-compose.yml up -d --no-recreate
+        run: docker compose -f grafana/docker-compose.yml up -d
 
       - name: Wait for startup
         run: sleep 10
