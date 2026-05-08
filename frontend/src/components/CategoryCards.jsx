@@ -61,7 +61,7 @@ function CategoryCards() {
 
               {/* Real image */}
               <div className="cat-img-wrap">
-                <img src={cat.img} alt={cat.title} className="cat-img" />
+                <img src={cat.img} alt={cat.title} className="cat-img" loading="lazy" decoding="async" />
               </div>
 
               <div className="cat-body">

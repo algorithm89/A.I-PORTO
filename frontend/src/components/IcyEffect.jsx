@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import './IcyEffect.css'
 
 /* ── generate one jagged crack branch ── */
@@ -29,6 +29,14 @@ export default function IcyEffect({ src, alt, className }) {
   const flakes   = useRef([])
   const cracks   = useRef([])   // active crack groups
   const hoverRef = useRef(false)
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)')
+    const handler = (e) => setIsMobile(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
 
   function makeFlakes(W, H, count = 80) {
     return Array.from({ length: count }, () => ({
@@ -42,6 +50,7 @@ export default function IcyEffect({ src, alt, className }) {
   }
 
   useEffect(() => {
+    if (isMobile) return  // skip canvas entirely on mobile
     const wrap = wrapRef.current
     const img  = imgRef.current
     const snow = snowRef.current
@@ -151,12 +160,12 @@ export default function IcyEffect({ src, alt, className }) {
       wrap.removeEventListener('mouseleave', onLeave)
       wrap.removeEventListener('click',      onClick)
     }
-  }, [src])
+  }, [src, isMobile])
 
   return (
     <div ref={wrapRef} className={`icy-wrap ${className || ''}`}>
       <img ref={imgRef} src={src} alt={alt} className="icy-img" />
-      <canvas ref={snowRef} className="icy-canvas" aria-hidden="true" />
+      {!isMobile && <canvas ref={snowRef} className="icy-canvas" aria-hidden="true" />}
     </div>
   )
 }

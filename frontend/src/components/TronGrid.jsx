@@ -1,5 +1,4 @@
-
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './TronGrid.css'
 
 function TronGrid({ cellSize = 50, color = '0,229,255', radius = 2.5 }) {
@@ -7,8 +6,17 @@ function TronGrid({ cellSize = 50, color = '0,229,255', radius = 2.5 }) {
   const mouse     = useRef({ x: -999, y: -999 })
   const cells     = useRef([])
   const raf       = useRef(null)
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
 
   useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)')
+    const handler = (e) => setIsMobile(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
+
+  useEffect(() => {
+    if (isMobile) return  // don't start canvas on mobile
     const canvas = canvasRef.current
     const parent = canvas.parentElement
     let W, H
@@ -82,11 +90,10 @@ function TronGrid({ cellSize = 50, color = '0,229,255', radius = 2.5 }) {
       parent.removeEventListener('mousemove', onMove)
       parent.removeEventListener('mouseleave', onLeave)
     }
-  }, [cellSize, color, radius])
+  }, [isMobile, cellSize, color, radius])
 
+  if (isMobile) return null
   return <canvas ref={canvasRef} className="tron-canvas" />
 }
 
 export default TronGrid
-
-

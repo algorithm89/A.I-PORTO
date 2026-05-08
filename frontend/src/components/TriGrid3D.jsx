@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './TriGrid3D.css'
 
 function TriGrid3D({ size = 36, color = '0,220,255', radius = 2.5 }) {
@@ -6,8 +6,17 @@ function TriGrid3D({ size = 36, color = '0,220,255', radius = 2.5 }) {
   const mouse     = useRef({ x: -9999, y: -9999 })
   const dots      = useRef([])
   const raf       = useRef(null)
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
 
   useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)')
+    const handler = (e) => setIsMobile(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
+
+  useEffect(() => {
+    if (isMobile) return  // don't start canvas on mobile
     const canvas = canvasRef.current
     const parent = canvas.parentElement
     let W, H
@@ -92,8 +101,9 @@ function TriGrid3D({ size = 36, color = '0,220,255', radius = 2.5 }) {
       parent.removeEventListener('mousemove', onMove)
       parent.removeEventListener('mouseleave', onLeave)
     }
-  }, [size, color, radius])
+  }, [isMobile, size, color, radius])
 
+  if (isMobile) return null
   return <canvas ref={canvasRef} className="trigrid3d-canvas" />
 }
 
