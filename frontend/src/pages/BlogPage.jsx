@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import TronGrid from '../components/TronGrid'
+import { requireAuth } from '../lib/auth'
 import './BlogPage.css'
 
 const POSTS = [
@@ -85,7 +86,7 @@ export default function BlogPage() {
                   ))}
                 </div>
 
-                <a href="#" className={`bc-read-btn bc-btn-${post.color}`}>Read post →</a>
+                <a href="#" className={`bc-read-btn bc-btn-${post.color}`} onClick={e => { e.preventDefault(); requireAuth() }}>Read post →</a>
               </div>
             </article>
           ))}

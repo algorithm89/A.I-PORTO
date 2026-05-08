@@ -36,9 +36,13 @@ function Header() {
     window.addEventListener('storage', syncAuth)
     // Custom event fired by App.jsx after writing token
     window.addEventListener('auth-changed', syncAuth)
+    // Custom event fired by child components to open login modal
+    const onOpenLogin = () => { setShowRegister(false); setShowLogin(true) }
+    window.addEventListener('open-login', onOpenLogin)
     return () => {
       window.removeEventListener('storage', syncAuth)
       window.removeEventListener('auth-changed', syncAuth)
+      window.removeEventListener('open-login', onOpenLogin)
     }
   }, [])
 

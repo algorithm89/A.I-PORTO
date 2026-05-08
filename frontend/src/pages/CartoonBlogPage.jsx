@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import HexGrid from '../components/HexGrid'
+import { requireAuth } from '../lib/auth'
 import './CartoonBlogPage.css'
 
 import pic10 from '../assets/PIC10.png'
@@ -105,7 +106,7 @@ export default function CartoonBlogPage() {
                   </div>
 
                   {post.live
-                    ? <Link to={post.to} className="cc-read-btn">Read episode →</Link>
+                    ? <a href={post.to} className="cc-read-btn" onClick={e => { e.preventDefault(); if (requireAuth()) window.location.href = post.to }}>Read episode →</a>
                     : <span className="cc-read-btn cc-read-btn-disabled">Coming soon…</span>
                   }
                 </div>

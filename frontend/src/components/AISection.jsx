@@ -1,5 +1,6 @@
 import './AISection.css'
 import TriGrid3D from './TriGrid3D'
+import { requireAuth } from '../lib/auth'
 
 const TRACKS = {
   ai: [
@@ -62,7 +63,7 @@ function LearnCard({ num, icon, color, title, desc }) {
       </div>
       <h3 className="lc-title">{title}</h3>
       <p className="lc-desc">{desc}</p>
-      <a href="#" className="lc-link">Read more →</a>
+      <a href="#" className="lc-link" onClick={requireAuth}>Read more →</a>
     </div>
   )
 }

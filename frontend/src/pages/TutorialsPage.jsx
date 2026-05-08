@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import TriGrid3D from '../components/TriGrid3D'
+import { requireAuth } from '../lib/auth'
 import './TutorialsPage.css'
 
 const TUTORIALS = [
@@ -232,7 +233,7 @@ export default function TutorialsPage() {
                   </div>
                   <div className="tc-actions">
                     <span className="tc-duration">⏱ {tut.duration}</span>
-                    <a href="#" className={`tc-btn tc-btn-${tut.color}`}>Read →</a>
+                    <a href="#" className={`tc-btn tc-btn-${tut.color}`} onClick={e => { e.preventDefault(); requireAuth() }}>Read →</a>
                   </div>
                 </div>
               </article>
