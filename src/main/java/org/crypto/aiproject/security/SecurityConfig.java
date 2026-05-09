@@ -42,6 +42,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/chat").permitAll()
                         // Actuator — Prometheus scrapes this from localhost only
                         .requestMatchers("/actuator/health", "/actuator/info", "/actuator/prometheus").permitAll()
+                        // Episodes — public read, admin write
+                        .requestMatchers("/api/episodes/**").permitAll()
                         // Admin endpoints — ADMIN role required
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         // Everything else requires authentication

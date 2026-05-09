@@ -119,12 +119,134 @@
   margin-bottom: 1.2rem;
 }
 
+/* ── Scene divider ── */
+.ns-divider {
+  text-align: center;
+  color: rgba(255,230,0,0.25);
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  margin: 2.5rem 0;
+  user-select: none;
+}
+
+/* ── System text (cybernetic readouts) ── */
+.ns-system-text {
+  font-family: 'Courier New', monospace;
+  font-size: 0.82rem;
+  color: var(--neon-yellow);
+  background: rgba(255,230,0,0.05);
+  border-left: 2px solid rgba(255,230,0,0.35);
+  padding: 0.8rem 1rem;
+  margin: 1.5rem 0;
+  line-height: 1.7;
+  letter-spacing: 0.5px;
+}
+
+/* ── Content rendered from DB ── */
+.ns-content p {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.9;
+  margin-bottom: 1.2rem;
+}
+.ns-content h2 {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--neon-yellow);
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid rgba(255,230,0,0.18);
+  margin: 2.5rem 0 1.5rem;
+}
+.ns-content hr.ns-divider {
+  border: none;
+  text-align: center;
+  color: rgba(255,230,0,0.25);
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  margin: 2.5rem 0;
+  user-select: none;
+}
+.ns-content hr.ns-divider::after {
+  content: '________________________________________';
+}
+.ns-content pre.ns-system-text {
+  font-family: 'Courier New', monospace;
+  font-size: 0.82rem;
+  color: var(--neon-yellow);
+  background: rgba(255,230,0,0.05);
+  border-left: 2px solid rgba(255,230,0,0.35);
+  padding: 0.8rem 1rem;
+  margin: 1.5rem 0;
+  line-height: 1.7;
+  letter-spacing: 0.5px;
+  white-space: pre-wrap;
+}
+
 /* ── Footer ── */
 .ns-footer-nav {
   position: relative;
   z-index: 1;
   padding-top: 2rem;
   max-width: 780px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* ── Chapter navigation tabs ── */
+.ns-chapter-nav {
+  position: relative;
+  z-index: 1;
+  max-width: 780px;
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  padding: 1.5rem 0 0.5rem;
+}
+.ns-chapter-tab {
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.4rem 1rem;
+  border-radius: 8px;
+  color: rgba(255,230,0,0.55);
+  background: rgba(255,230,0,0.04);
+  border: 1px solid rgba(255,230,0,0.12);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.ns-chapter-tab:hover {
+  color: var(--neon-yellow);
+  background: rgba(255,230,0,0.1);
+  border-color: rgba(255,230,0,0.3);
+}
+.ns-chapter-tab-active {
+  color: #000;
+  background: var(--neon-yellow);
+  border-color: var(--neon-yellow);
+  font-weight: 800;
+}
+.ns-chapter-tab-active:hover {
+  color: #000;
+  background: var(--neon-yellow);
+}
+
+/* ── Chapter header ── */
+.ns-chapter-header {
+  position: relative;
+  z-index: 1;
+  max-width: 780px;
+  padding-top: 0.5rem;
+}
+
+/* ── Episode nav (bottom) ── */
+.ns-episode-nav {
+  border-top: 1px solid rgba(255,230,0,0.1);
+  margin-top: 1rem;
+  padding-top: 1.5rem;
 }
 
 @media (max-width: 600px) {

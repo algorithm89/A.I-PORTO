@@ -16,7 +16,7 @@ const POSTS = [
     readTime: '8 min read',
     tags: ['neon-spirit', 'original', 'episode-1'],
     img: pic10,
-    to: '/cartoons/neon-spirit/ep1',
+    to: '/cartoons/neon-spirit/ep/1/ch/1',
     live: true,
   },
   {

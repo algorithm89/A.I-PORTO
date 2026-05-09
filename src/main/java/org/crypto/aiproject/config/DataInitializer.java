@@ -16,13 +16,18 @@ public class DataInitializer implements CommandLineRunner {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public DataInitializer(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public DataInitializer(UserRepository userRepository,
+                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public void run(String... args) {
+        seedAdminUser();
+    }
+
+    private void seedAdminUser() {
         if (userRepository.findByUsername("admin").isEmpty()) {
             User admin = new User("admin", "admin@bublikstudios.net", passwordEncoder.encode("Admin123!"));
             admin.setRole("ADMIN");
@@ -34,4 +39,3 @@ public class DataInitializer implements CommandLineRunner {
         }
     }
 }
-
