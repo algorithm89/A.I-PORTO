@@ -29,7 +29,7 @@ export default function NeonSpiritEp1Page() {
           <span className="ns-dot">·</span>
           <span>✍️ BublikStudios</span>
           <span className="ns-dot">·</span>
-          <span>📖 Chapter 1</span>
+          <span>📖 2 Chapters</span>
         </div>
         <div className="ns-tags">
           <span className="ns-tag">#neon-spirit</span>
@@ -40,14 +40,23 @@ export default function NeonSpiritEp1Page() {
 
       {/* ── Script body ── */}
       <main className="ns-body container">
+        {/* ═══════════════════════════════════════════
+            CHAPTER 1 — PASTE YOUR SCRIPT BELOW
+            ═══════════════════════════════════════════ */}
         <h2 className="ns-chapter-title">Chapter 1</h2>
-
-        {/* ✏️ PASTE YOUR SCRIPT HERE */}
         <div className="ns-script-placeholder">
           <span>✍️</span>
           <p>Script coming soon — stay tuned.</p>
         </div>
-        {/* ✏️ END SCRIPT */}
+
+        {/* ═══════════════════════════════════════════
+            CHAPTER 2 — PASTE YOUR SCRIPT BELOW
+            ═══════════════════════════════════════════ */}
+        <h2 className="ns-chapter-title">Chapter 2</h2>
+        <div className="ns-script-placeholder">
+          <span>✍️</span>
+          <p>Script coming soon — stay tuned.</p>
+        </div>
       </main>
 
       <div className="ns-footer-nav container">

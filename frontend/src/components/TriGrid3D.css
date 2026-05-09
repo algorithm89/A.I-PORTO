@@ -1,9 +1,37 @@
-.trigrid3d-canvas {
+/* ── Pure-CSS dot grid (no canvas, no JS loop) ──
+   radial-gradient draws each dot, repeated by background-size.
+*/
+.trigrid3d {
+  --cell: 36px;
+  --color: 0, 220, 255;
+  --mx: -9999px;
+  --my: -9999px;
+  --glow: 0;
+
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
   z-index: 0;
-}
 
+  background-image:
+    /* mouse glow */
+    radial-gradient(
+      circle 220px at var(--mx) var(--my),
+      rgba(var(--color), calc(0.20 * var(--glow))) 0%,
+      rgba(var(--color), calc(0.06 * var(--glow))) 40%,
+      transparent 70%
+    ),
+    /* dot pattern */
+    radial-gradient(
+      circle 1.4px at center,
+      rgba(var(--color), 0.28) 0%,
+      rgba(var(--color), 0.28) 100%,
+      transparent 100%
+    );
+
+  background-size:
+    100% 100%,
+    var(--cell) var(--cell);
+}

@@ -1,9 +1,38 @@
-.tron-canvas {
+/* ── Pure-CSS Tron grid (no canvas, no JS loop) ──
+   Two layered repeating-linear-gradients draw the grid.
+   A radial-gradient that follows the cursor adds the neon glow.
+*/
+.tron-grid {
+  --cell: 50px;
+  --color: 0, 229, 255;
+  --mx: -9999px;
+  --my: -9999px;
+  --glow: 0;
+
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
   z-index: 0;
-}
 
+  background-image:
+    /* mouse-following neon glow */
+    radial-gradient(
+      circle 220px at var(--mx) var(--my),
+      rgba(var(--color), calc(0.18 * var(--glow))) 0%,
+      rgba(var(--color), calc(0.05 * var(--glow))) 40%,
+      transparent 70%
+    ),
+    /* vertical lines */
+    linear-gradient(to right,  rgba(var(--color), 0.08) 1px, transparent 1px),
+    /* horizontal lines */
+    linear-gradient(to bottom, rgba(var(--color), 0.08) 1px, transparent 1px);
+
+  background-size:
+    100% 100%,
+    var(--cell) var(--cell),
+    var(--cell) var(--cell);
+
+  transition: background-image 0.15s linear;
+}

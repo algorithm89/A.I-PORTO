@@ -1,27 +1,44 @@
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
+  # attach these labels to every metric scraped
+  external_labels:
+    server: 'bublikstudios'
 
 scrape_configs:
 
-  # ── Server CPU / RAM / disk / network ──
+  # ── Server: CPU / RAM / disk / network / load ──
   - job_name: node
     static_configs:
       - targets: ['127.0.0.1:9100']
+        labels:
+          instance: 'bublikstudios-server'
 
   # ── Docker container metrics ──
   - job_name: cadvisor
     static_configs:
       - targets: ['127.0.0.1:9101']
+        labels:
+          instance: 'bublikstudios-server'
+    # clean up container name label: /ai-backend → ai-backend
+    metric_relabel_configs:
+      - source_labels: [container_label_com_docker_compose_service]
+        target_label: service
+      - source_labels: [name]
+        regex: '/?(.*)'
+        target_label: container_name
+        replacement: '$1'
 
-  # ── Spring Boot (actuator metrics) ──
+  # ── Spring Boot JVM + HTTP + DB pool ──
   - job_name: spring-boot
     metrics_path: /actuator/prometheus
     static_configs:
       - targets: ['127.0.0.1:8080']
+        labels:
+          app: 'ai-backend'
+          instance: 'bublikstudios-server'
 
   # ── Prometheus itself ──
   - job_name: prometheus
     static_configs:
       - targets: ['127.0.0.1:9090']
-

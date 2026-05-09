@@ -11,7 +11,7 @@ on:
 jobs:
   deploy-mysql:
     name: Deploy MySQL
-    runs-on: [self-hosted, bublik]
+    runs-on: self-hosted
 
     steps:
       - name: Checkout code

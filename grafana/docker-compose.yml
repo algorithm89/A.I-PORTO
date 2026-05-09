@@ -51,6 +51,10 @@ services:
     command:
       - --port=9101
       - --listen_ip=127.0.0.1
+      - --disable_metrics=tcp,udp,advtcp,hugetlb,sched,process,referenced_memory,cpu_topology,resctrl
+      - --housekeeping_interval=10s
+      - --max_housekeeping_interval=15s
+      - --allow_dynamic_housekeeping=true
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
@@ -58,6 +62,12 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
       - /dev/disk/:/dev/disk:ro
     privileged: true
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:9101/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     restart: unless-stopped
 
   # ── Dashboard UI ──────────────────────────────────
@@ -70,8 +80,19 @@ services:
       GF_SERVER_SERVE_FROM_SUB_PATH: "true"
       GF_SERVER_HTTP_PORT: "3100"
       GF_USERS_ALLOW_SIGN_UP: "false"
+      # Pin admin credentials so they survive restarts
+      GF_SECURITY_ADMIN_USER: "admin"
+      GF_SECURITY_ADMIN_PASSWORD: "${GRAFANA_ADMIN_PASSWORD:-bublik_grafana_2026}"
+      # Explicit paths so data never moves
+      GF_PATHS_DATA: "/var/lib/grafana"
+      GF_PATHS_LOGS: "/var/log/grafana"
+      GF_PATHS_PLUGINS: "/var/lib/grafana/plugins"
+      GF_PATHS_PROVISIONING: "/etc/grafana/provisioning"
+      # Don't reset admin password if it was already set
+      GF_SECURITY_DISABLE_INITIAL_ADMIN_CREATION: "false"
     volumes:
       - grafana_data:/var/lib/grafana
+      - grafana_logs:/var/log/grafana
       - ./provisioning:/etc/grafana/provisioning:ro
     depends_on:
       - loki
@@ -80,5 +101,11 @@ services:
 
 volumes:
   loki_data:
+    name: ai_loki_data
   prometheus_data:
+    name: ai_prometheus_data
   grafana_data:
+
+    name: ai_grafana_data
+  grafana_logs:
+    name: ai_grafana_logs
