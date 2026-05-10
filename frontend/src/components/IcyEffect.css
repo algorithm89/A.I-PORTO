@@ -24,6 +24,6 @@
   height: 100%;
   border-radius: 18px;
   pointer-events: none;
+  z-index: 1;
+  background: transparent;
 }
-
-

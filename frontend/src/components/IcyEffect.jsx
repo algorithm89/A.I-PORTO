@@ -29,6 +29,7 @@ export default function IcyEffect({ src, alt, className }) {
   const flakes   = useRef([])
   const cracks   = useRef([])   // active crack groups
   const hoverRef = useRef(false)
+  const vignetteRef = useRef(null)  // cached frost vignette
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
 
   useEffect(() => {
@@ -38,25 +39,26 @@ export default function IcyEffect({ src, alt, className }) {
     return () => mq.removeEventListener('change', handler)
   }, [])
 
-  function makeFlakes(W, H, count = 80) {
+  function makeFlakes(W, H, count = 35) {
     return Array.from({ length: count }, () => ({
       x:       Math.random() * W,
       y:       Math.random() * H,
-      r:       Math.random() * 2.2 + 0.6,
-      speed:   Math.random() * 0.6 + 0.25,
-      drift:   (Math.random() - 0.5) * 0.4,
-      opacity: Math.random() * 0.55 + 0.25,
+      r:       Math.random() * 1.8 + 0.5,
+      speed:   Math.random() * 0.5 + 0.2,
+      drift:   (Math.random() - 0.5) * 0.3,
+      opacity: Math.random() * 0.4 + 0.15,
     }))
   }
 
   useEffect(() => {
-    if (isMobile) return  // skip canvas entirely on mobile
+    if (isMobile) return
     const wrap = wrapRef.current
     const img  = imgRef.current
     const snow = snowRef.current
     if (!wrap || !img || !snow) return
 
     let alive = true
+    let frameCount = 0
 
     const onLoad = () => {
       if (!alive) return
@@ -68,26 +70,37 @@ export default function IcyEffect({ src, alt, className }) {
 
       const ctx = snow.getContext('2d')
 
+      // ── Cache the frost vignette (render once) ──
+      const offscreen = document.createElement('canvas')
+      offscreen.width = W
+      offscreen.height = H
+      const offCtx = offscreen.getContext('2d')
+      const vg = offCtx.createRadialGradient(W/2, H/2, H*0.28, W/2, H/2, H*0.82)
+      vg.addColorStop(0, 'rgba(0,0,0,0)')
+      vg.addColorStop(1, 'rgba(160,220,255,0.18)')
+      offCtx.fillStyle = vg
+      offCtx.fillRect(0, 0, W, H)
+      vignetteRef.current = offscreen
+
       const tick = () => {
         if (!alive) return
+        frameCount++
+
+        // Run at ~30fps (skip every other frame)
+        if (frameCount % 2 === 0) {
+          rafRef.current = requestAnimationFrame(tick)
+          return
+        }
+
         ctx.clearRect(0, 0, W, H)
 
-        /* ── blue-icy tint overlay ── */
-        ctx.fillStyle = hoverRef.current
-          ? 'rgba(160,220,255,0.10)'
-          : 'rgba(180,230,255,0.04)'
-        ctx.fillRect(0, 0, W, H)
-
-        /* ── snowflakes ── */
+        // ── Snowflakes (no shadowBlur — huge perf cost) ──
         flakes.current.forEach(f => {
           ctx.beginPath()
           ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2)
-          ctx.fillStyle   = `rgba(220,240,255,${f.opacity})`
-          ctx.shadowBlur  = 4
-          ctx.shadowColor = 'rgba(160,220,255,0.8)'
+          ctx.fillStyle = `rgba(220,240,255,${f.opacity})`
           ctx.fill()
-          ctx.shadowBlur  = 0
-          const speed = hoverRef.current ? f.speed * 2.2 : f.speed
+          const speed = hoverRef.current ? f.speed * 2.5 : f.speed
           f.y += speed
           f.x += f.drift
           if (f.y > H + 4) { f.y = -4;  f.x = Math.random() * W }
@@ -95,10 +108,10 @@ export default function IcyEffect({ src, alt, className }) {
           if (f.x < -4)      f.x = W + 4
         })
 
-        /* ── ice cracks ── */
+        // ── Ice cracks ──
         cracks.current = cracks.current.filter(c => c.alpha > 0.01)
         cracks.current.forEach(c => {
-          c.alpha -= 0.008   // fade out
+          c.alpha -= 0.008
           ctx.save()
           ctx.globalAlpha = c.alpha
           ctx.strokeStyle = 'rgba(200,235,255,1)'
@@ -115,12 +128,10 @@ export default function IcyEffect({ src, alt, className }) {
           ctx.restore()
         })
 
-        /* ── frost vignette ── */
-        const vg = ctx.createRadialGradient(W/2, H/2, H*0.28, W/2, H/2, H*0.82)
-        vg.addColorStop(0, 'rgba(0,0,0,0)')
-        vg.addColorStop(1, 'rgba(160,220,255,0.18)')
-        ctx.fillStyle = vg
-        ctx.fillRect(0, 0, W, H)
+        // ── Frost vignette (from cached offscreen) ──
+        if (vignetteRef.current) {
+          ctx.drawImage(vignetteRef.current, 0, 0)
+        }
 
         rafRef.current = requestAnimationFrame(tick)
       }

@@ -154,7 +154,7 @@
 .hero-img-wrap {
   width: 100%;
   max-width: 480px;
-  /* no border, no shadow, no clip — let PIC25 sit on its own background */
+  aspect-ratio: 4 / 3;
 }
 .hero-banner-canvas {
   width: 100% !important;
