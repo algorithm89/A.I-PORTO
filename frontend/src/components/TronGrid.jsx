@@ -93,7 +93,7 @@ function TronGrid({ cellSize = 50, color = '0,229,255', radius = 2.5 }) {
   }, [isMobile, cellSize, color, radius])
 
   if (isMobile) return null
-  return <canvas ref={canvasRef} className="tron-canvas" />
+  return <canvas ref={canvasRef} className="tron-grid" />
 }
 
 export default TronGrid

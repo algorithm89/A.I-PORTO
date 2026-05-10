@@ -116,7 +116,7 @@ function HexGrid({ color = '255,230,0', radius = 3 }) {
   }, [isMobile, color, radius])
 
   if (isMobile) return null
-  return <canvas ref={canvasRef} className="hex-canvas" />
+  return <canvas ref={canvasRef} className="hex-grid" />
 }
 
 export default HexGrid
