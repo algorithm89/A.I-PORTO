@@ -1,5 +1,5 @@
-/* ── Pure-CSS Hex grid (no canvas, no JS loop) ──
-   Inline SVG hexagon tile + mouse-following neon glow.
+/* ── Pure-CSS Hex grid ──
+   Hex pattern only visible when mouse is near (--glow > 0).
    The SVG is data-URL so browser caches the pattern once.
 */
 .hex-grid {
@@ -23,10 +23,20 @@
       rgba(var(--color), calc(0.05 * var(--glow))) 40%,
       transparent 70%
     ),
-    /* hexagon pattern (single tile, repeats) */
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='56' height='49' viewBox='0 0 56 49'><polygon points='14,1 42,1 55.5,24.5 42,48 14,48 0.5,24.5' fill='none' stroke='rgba(255,230,0,0.09)' stroke-width='1'/></svg>");
+    /* hexagon pattern — stroke fixed, element opacity handles hide/show */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='56' height='49' viewBox='0 0 56 49'><polygon points='14,1 42,1 55.5,24.5 42,48 14,48 0.5,24.5' fill='none' stroke='rgba(255,230,0,0.12)' stroke-width='1'/></svg>");
 
   background-size:
     100% 100%,
     56px 49px;
+
+  opacity: calc(var(--glow));
+}
+
+/* Static hex grid for mobile — always visible, no mouse glow */
+.hex-grid-static {
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='56' height='49' viewBox='0 0 56 49'><polygon points='14,1 42,1 55.5,24.5 42,48 14,48 0.5,24.5' fill='none' stroke='rgba(255,230,0,0.10)' stroke-width='1'/></svg>");
+  background-size: 56px 49px;
+  opacity: 1;
 }

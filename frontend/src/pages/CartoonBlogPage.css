@@ -10,7 +10,7 @@
 .cartoon-hero {
   position: relative;
   z-index: 1;
-  padding: 5rem 0 3.5rem;
+  padding: 2.5rem 0 2.5rem;
   text-align: center;
 }
 .cartoon-hero-title {
@@ -242,4 +242,3 @@
   .cartoon-cta-inner { flex-direction: column; align-items: flex-start; }
   .cc-img-wrap { height: 220px; }
 }
-

@@ -36,18 +36,7 @@ function TronGrid({ cellSize = 50, color = '0,229,255', radius = 2.5 }) {
       const mx = mouse.current.x
       const my = mouse.current.y
 
-      // base dim grid
-      ctx.strokeStyle = `rgba(${color},0.07)`
-      ctx.lineWidth   = 0.5
-      ctx.shadowBlur  = 0
-      for (let x = 0; x <= W; x += cellSize) {
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke()
-      }
-      for (let y = 0; y <= H; y += cellSize) {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke()
-      }
-
-      // lit cells near mouse
+      // lit cells near mouse — only visible on hover
       cells.current.forEach(c => {
         const cx     = c.x + cellSize / 2
         const cy     = c.y + cellSize / 2
@@ -92,7 +81,7 @@ function TronGrid({ cellSize = 50, color = '0,229,255', radius = 2.5 }) {
     }
   }, [isMobile, cellSize, color, radius])
 
-  if (isMobile) return null
+  if (isMobile) return <div className="tron-grid tron-grid-static" />
   return <canvas ref={canvasRef} className="tron-grid" />
 }
 

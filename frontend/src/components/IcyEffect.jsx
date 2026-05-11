@@ -30,14 +30,6 @@ export default function IcyEffect({ src, alt, className }) {
   const cracks   = useRef([])   // active crack groups
   const hoverRef = useRef(false)
   const vignetteRef = useRef(null)  // cached frost vignette
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
-
-  useEffect(() => {
-    const mq = window.matchMedia('(max-width: 767px)')
-    const handler = (e) => setIsMobile(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [])
 
   function makeFlakes(W, H, count = 35) {
     return Array.from({ length: count }, () => ({
@@ -51,7 +43,6 @@ export default function IcyEffect({ src, alt, className }) {
   }
 
   useEffect(() => {
-    if (isMobile) return
     const wrap = wrapRef.current
     const img  = imgRef.current
     const snow = snowRef.current
@@ -142,8 +133,8 @@ export default function IcyEffect({ src, alt, className }) {
     if (img.complete) onLoad()
     else img.addEventListener('load', onLoad)
 
-    /* ── click → ice crack ── */
-    const onClick = (e) => {
+    /* ── click / tap → ice crack ── */
+    const onActivate = (e) => {
       const snow = snowRef.current
       if (!snow) return
       const rect = snow.getBoundingClientRect()
@@ -161,7 +152,8 @@ export default function IcyEffect({ src, alt, className }) {
     const onLeave = () => { hoverRef.current = false }
     wrap.addEventListener('mouseenter', onEnter)
     wrap.addEventListener('mouseleave', onLeave)
-    wrap.addEventListener('click',      onClick)
+    wrap.addEventListener('click',    onActivate)
+    wrap.addEventListener('touchstart', onActivate, { passive: true })
 
     return () => {
       alive = false
@@ -169,14 +161,15 @@ export default function IcyEffect({ src, alt, className }) {
       img.removeEventListener('load', onLoad)
       wrap.removeEventListener('mouseenter', onEnter)
       wrap.removeEventListener('mouseleave', onLeave)
-      wrap.removeEventListener('click',      onClick)
+      wrap.removeEventListener('click',      onActivate)
+      wrap.removeEventListener('touchstart', onActivate)
     }
-  }, [src, isMobile])
+  }, [src])
 
   return (
     <div ref={wrapRef} className={`icy-wrap ${className || ''}`}>
       <img ref={imgRef} src={src} alt={alt} className="icy-img" />
-      {!isMobile && <canvas ref={snowRef} className="icy-canvas" aria-hidden="true" />}
+      <canvas ref={snowRef} className="icy-canvas" aria-hidden="true" />
     </div>
   )
 }

@@ -70,13 +70,6 @@ function TriGrid3D({ size = 36, color = '0,220,255', radius = 2.5 }) {
           ctx.shadowBlur  = 10 + d.alpha * 22
           ctx.stroke()
           ctx.shadowBlur  = 0
-        } else {
-          // dim dot at rest
-          ctx.beginPath()
-          ctx.arc(d.cx, d.cy, BASE_R * 0.42, 0, Math.PI * 2)
-          ctx.strokeStyle = `rgba(${color},0.09)`
-          ctx.lineWidth   = 0.6
-          ctx.stroke()
         }
       })
 
@@ -103,8 +96,8 @@ function TriGrid3D({ size = 36, color = '0,220,255', radius = 2.5 }) {
     }
   }, [isMobile, size, color, radius])
 
-  if (isMobile) return null
-  return <canvas ref={canvasRef} className="trigrid3d-canvas" />
+  if (isMobile) return <div className="trigrid3d trigrid3d-static" />
+  return <canvas ref={canvasRef} className="trigrid3d" />
 }
 
 export default TriGrid3D

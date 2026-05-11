@@ -22,7 +22,7 @@ const FAVOURITES = [
 function CartoonBelt() {
   return (
     <div className="belt-wrap" id="animation">
-      <HexGrid color="255,230,0" radius={3.5} />
+      <HexGrid color="255,230,0" radius={3.5} alwaysVisible />
       <div className="container" style={{position:'relative', zIndex:1}}>
         <div className="belt-header">
           <span className="sec-tag sec-tag-yellow">🎬 Favourite Animations</span>
