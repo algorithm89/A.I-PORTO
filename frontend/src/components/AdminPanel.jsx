@@ -89,12 +89,12 @@ function AdminPanel({ onClose }) {
   const fetchEpisodes = useCallback(async () => {
     setEpLoading(true)
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/episodes`)
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/episodes`, { headers: { Authorization: `Bearer ${token}` } })
       if (!res.ok) throw new Error(`Server returned ${res.status}`)
       setEpisodes(await res.json())
     } catch (e) { setError(e.message) }
     finally { setEpLoading(false) }
-  }, [])
+  }, [token])
 
   useEffect(() => { if (tab === 'episodes' || tab === 'chapters') fetchEpisodes() }, [tab, fetchEpisodes])
 
@@ -170,12 +170,12 @@ function AdminPanel({ onClose }) {
     if (!episodeId) { setChapters([]); return }
     setChLoading(true)
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/episodes/${episodeId}/chapters`)
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/episodes/${episodeId}/chapters`, { headers: { Authorization: `Bearer ${token}` } })
       if (!res.ok) throw new Error(`Server returned ${res.status}`)
       setChapters(await res.json())
     } catch (e) { setError(e.message) }
     finally { setChLoading(false) }
-  }, [])
+  }, [token])
 
   function selectChapterEpisode(id) {
     setChEpisodeId(id)

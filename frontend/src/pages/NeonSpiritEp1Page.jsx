@@ -47,19 +47,21 @@ export default function NeonSpiritEpPage() {
     setLoading(true)
     setNotFound(false)
     try {
-      const epRes = await fetch(`${API}/api/episodes/series/${encodeURIComponent(SERIES)}/ep/${ep}`)
+      const token = localStorage.getItem('token')
+      const headers = token ? { Authorization: `Bearer ${token}` } : {}
+      const epRes = await fetch(`${API}/api/episodes/series/${encodeURIComponent(SERIES)}/ep/${ep}`, { headers })
       if (epRes.status === 404) { setEpisode(null); setChapters([]); setChapter(null); setNotFound(true); return }
       if (!epRes.ok) throw new Error(`Server error (${epRes.status})`)
       const epData = await epRes.json()
       setEpisode(epData)
 
-      const chRes = await fetch(`${API}/api/episodes/${epData.id}/chapters`)
+      const chRes = await fetch(`${API}/api/episodes/${epData.id}/chapters`, { headers })
       const chData = chRes.ok ? await chRes.json() : []
       setChapters(chData)
 
       if (chData.length > 0) {
         const targetCh = chData.find(c => c.chapterNumber === ch) || chData[0]
-        const detailRes = await fetch(`${API}/api/episodes/${epData.id}/chapters/${targetCh.chapterNumber}`)
+        const detailRes = await fetch(`${API}/api/episodes/${epData.id}/chapters/${targetCh.chapterNumber}`, { headers })
         setChapter(detailRes.ok ? await detailRes.json() : targetCh)
       } else {
         setChapter(null)
