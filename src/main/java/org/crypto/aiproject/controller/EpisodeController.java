@@ -1,5 +1,6 @@
 package org.crypto.aiproject.controller;
 
+import org.crypto.aiproject.dto.EpisodeSummary;
 import org.crypto.aiproject.entity.Episode;
 import org.crypto.aiproject.service.EpisodeService;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +18,16 @@ public class EpisodeController {
         this.episodeService = episodeService;
     }
 
-    /** GET /api/episodes — list all episodes (public) */
+    /** GET /api/episodes — list all episodes (logged-in users) */
     @GetMapping
     public ResponseEntity<List<Episode>> getAllEpisodes() {
         return ResponseEntity.ok(episodeService.getAllEpisodes());
+    }
+
+    /** GET /api/episodes/summaries — episode metadata only, no story content (public) */
+    @GetMapping("/summaries")
+    public ResponseEntity<List<EpisodeSummary>> getAllSummaries() {
+        return ResponseEntity.ok(episodeService.getAllSummaries());
     }
 
     /** GET /api/episodes/{id} — get single episode by ID (public) */

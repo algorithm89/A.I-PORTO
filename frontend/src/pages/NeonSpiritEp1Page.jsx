@@ -255,7 +255,7 @@ export default function NeonSpiritEpPage() {
               to={`/cartoons/neon-spirit/ep/${ep}/ch/${c.chapterNumber}`}
               className={`ns-chapter-tab ${c.chapterNumber === currentCh ? 'ns-chapter-tab-active' : ''}`}
             >
-              {c.title || `Ch ${c.chapterNumber}`}
+              {c.title || `Chapter ${c.chapterNumber}`}
             </Link>
           ))}
         </nav>

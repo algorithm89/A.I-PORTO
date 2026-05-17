@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import HexTronGrid from '../components/HexTronGrid'
 import { requireAuth } from '../lib/auth'
@@ -5,49 +6,41 @@ import './CartoonBlogPage.css'
 
 import pic10 from '../assets/PIC10.png'
 
-const POSTS = [
-  {
-    id: 1,
-    emoji: '✨',
-    series: 'Neon Spirit',
-    title: 'Episode I: A Blast from a Poorly Indexed Past',
-    excerpt: 'In the city of Neon Hollow, a retired agent named Zero cracks open an archive that was never meant to be found — and meets an Index with strong opinions about filing systems.',
-    date: 'April 20, 2026',
-    readTime: '8 min read',
-    tags: ['neon-spirit', 'original', 'episode-1'],
-    img: pic10,
-    to: '/cartoons/neon-spirit/ep/1/ch/1',
-    live: true,
-  },
-  {
-    id: 2,
-    emoji: '🌙',
-    series: 'Coming Soon',
-    title: 'Story #2 — Title TBA',
-    excerpt: 'A new story is being written. Check back soon.',
-    date: '—',
-    readTime: '—',
-    tags: ['coming-soon'],
-    img: null,
-    to: null,
-    live: false,
-  },
-  {
-    id: 3,
-    emoji: '🔥',
-    series: 'Coming Soon',
-    title: 'Story #3 — Title TBA',
-    excerpt: 'Another adventure in the works. More details soon.',
-    date: '—',
-    readTime: '—',
-    tags: ['coming-soon'],
-    img: null,
-    to: null,
-    live: false,
-  },
-]
+const API = import.meta.env.VITE_API_URL || ''
+
+function seriesSlug(series) {
+  return (series || '').toLowerCase().trim().replace(/\s+/g, '-')
+}
+
+function formatDate(iso) {
+  if (!iso) return ''
+  const d = new Date(iso)
+  if (isNaN(d.getTime())) return ''
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+}
 
 export default function CartoonBlogPage() {
+  const [episodes, setEpisodes] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch(`${API}/api/episodes/summaries`)
+        if (!res.ok) throw new Error(`Server returned ${res.status}`)
+        const data = await res.json()
+        data.sort((a, b) => (a.episodeNumber || 0) - (b.episodeNumber || 0))
+        setEpisodes(data)
+      } catch (e) {
+        setError(e.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [])
+
   return (
     <div className="cartoon-page">
       <HexTronGrid cellSize={44} color="255,230,0" radius={2.8} />
@@ -69,49 +62,57 @@ export default function CartoonBlogPage() {
 
       {/* ── Posts grid ── */}
       <section className="cartoon-grid-section container">
-        {POSTS.length === 0 ? (
+        {loading ? (
+          <div className="cartoon-empty">
+            <span className="cartoon-empty-icon">⏳</span>
+            <p>Loading episodes…</p>
+          </div>
+        ) : error ? (
+          <div className="cartoon-empty">
+            <span className="cartoon-empty-icon">⚠️</span>
+            <h2>Couldn't load episodes</h2>
+            <p>{error}</p>
+          </div>
+        ) : episodes.length === 0 ? (
           <div className="cartoon-empty">
             <span className="cartoon-empty-icon">📝</span>
-            <h2>No posts yet</h2>
-            <p>New cartoon blog posts are coming soon — stay tuned!</p>
+            <h2>No episodes yet</h2>
+            <p>New cartoon blog episodes are coming soon — stay tuned!</p>
           </div>
         ) : (
           <div className="cartoon-grid">
-            {POSTS.map(post => (
-              <article key={post.id} className={`cartoon-card${!post.live ? ' cartoon-card-placeholder' : ''}`}>
-                <div className="cc-img-wrap">
-                  {post.img
-                    ? <img src={post.img} alt={post.title} className="cc-img" loading="lazy" />
-                    : <div className="cc-img-empty"><span>{post.emoji}</span></div>
-                  }
-                  <div className="cc-img-overlay">
-                    <span className="cc-emoji">{post.emoji}</span>
-                  </div>
-                </div>
-
-                <div className="cc-body">
-                  <div className="cc-meta">
-                    <span className="cc-series">{post.series}</span>
-                    {post.date !== '—' && <><span className="cc-dot">·</span><span className="cc-date">{post.date}</span></>}
-                    {post.readTime !== '—' && <><span className="cc-dot">·</span><span className="cc-read">{post.readTime}</span></>}
+            {episodes.map(ep => {
+              const to = `/cartoons/${seriesSlug(ep.series)}/ep/${ep.episodeNumber}/ch/1`
+              const date = formatDate(ep.createdAt)
+              return (
+                <article key={ep.id} className="cartoon-card">
+                  <div className="cc-img-wrap">
+                    <img src={pic10} alt={ep.title} className="cc-img" loading="lazy" />
+                    <div className="cc-img-overlay">
+                      <span className="cc-emoji">✨</span>
+                    </div>
                   </div>
 
-                  <h2 className="cc-title">{post.title}</h2>
-                  <p className="cc-excerpt">{post.excerpt}</p>
+                  <div className="cc-body">
+                    <div className="cc-meta">
+                      <span className="cc-series">{ep.series}</span>
+                      {date && <><span className="cc-dot">·</span><span className="cc-date">{date}</span></>}
+                    </div>
 
-                  <div className="cc-tags">
-                    {post.tags.map(t => (
-                      <span key={t} className="cc-tag">#{t}</span>
-                    ))}
+                    <h2 className="cc-title">{ep.title}</h2>
+                    {ep.subtitle && <p className="cc-excerpt">{ep.subtitle}</p>}
+
+                    <a
+                      href={to}
+                      className="cc-read-btn"
+                      onClick={e => { e.preventDefault(); if (requireAuth()) window.location.href = to }}
+                    >
+                      Read episode →
+                    </a>
                   </div>
-
-                  {post.live
-                    ? <a href={post.to} className="cc-read-btn" onClick={e => { e.preventDefault(); if (requireAuth()) window.location.href = post.to }}>Read episode →</a>
-                    : <span className="cc-read-btn cc-read-btn-disabled">Coming soon…</span>
-                  }
-                </div>
-              </article>
-            ))}
+                </article>
+              )
+            })}
           </div>
         )}
       </section>

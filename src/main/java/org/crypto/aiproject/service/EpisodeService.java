@@ -1,5 +1,6 @@
 package org.crypto.aiproject.service;
 
+import org.crypto.aiproject.dto.EpisodeSummary;
 import org.crypto.aiproject.entity.Episode;
 import org.crypto.aiproject.repository.EpisodeRepository;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,14 @@ public class EpisodeService {
 
     public List<Episode> getAllEpisodes() {
         return episodeRepository.findAll();
+    }
+
+    public List<EpisodeSummary> getAllSummaries() {
+        return episodeRepository.findAll().stream()
+                .map(e -> new EpisodeSummary(
+                        e.getId(), e.getSeries(), e.getEpisodeNumber(),
+                        e.getTitle(), e.getSubtitle(), e.getCoverImage(), e.getCreatedAt()))
+                .toList();
     }
 
     public List<Episode> getEpisodesBySeries(String series) {
