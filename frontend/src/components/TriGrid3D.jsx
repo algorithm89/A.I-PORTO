@@ -83,14 +83,15 @@ function TriGrid3D({ size = 36, color = '0,220,255', radius = 2.5 }) {
     function onLeave() { mouse.current = { x: -9999, y: -9999 } }
 
     resize()
-    window.addEventListener('resize', resize)
+    const ro = new ResizeObserver(resize)
+    ro.observe(parent)
     parent.addEventListener('mousemove', onMove)
     parent.addEventListener('mouseleave', onLeave)
     draw()
 
     return () => {
       cancelAnimationFrame(raf.current)
-      window.removeEventListener('resize', resize)
+      ro.disconnect()
       parent.removeEventListener('mousemove', onMove)
       parent.removeEventListener('mouseleave', onLeave)
     }

@@ -1,5 +1,6 @@
 import './AISection.css'
-import TriGrid3D from './TriGrid3D'
+import TriGrid3D  from './TriGrid3D'
+import HexTronGrid from './HexTronGrid'
 import { requireAuth } from '../lib/auth'
 
 const TRACKS = {
@@ -16,33 +17,39 @@ const TRACKS = {
 
 function AISection() {
   return (
-    <section className="learn-section" id="ai">
-      {/* 3D triangle grid — blue teal, pops out on mouse hover */}
-      <TriGrid3D size={52} color="0,220,255" radius={3.2} />
-      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+    <>
 
-        {/* AI */}
-        <div className="sec-header">
-          <span className="sec-tag sec-tag-cyan">🤖 Learn AI</span>
-          <h2 className="sec-title">AI is <span className="gradient-text">not scary.</span></h2>
-          <p className="sec-sub">A real, honest roadmap — no gatekeeping. Just the steps that actually work.</p>
+      {/* ── AI Section ── */}
+      <section className="learn-section" id="ai">
+        <TriGrid3D size={52} color="0,220,255" radius={3.2} />
+        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+          <div className="sec-header">
+            <span className="sec-tag sec-tag-cyan">🤖 Learn AI</span>
+            <h2 className="sec-title">AI is <span className="gradient-text">not scary.</span></h2>
+            <p className="sec-sub">A real, honest roadmap — no gatekeeping. Just the steps that actually work.</p>
+          </div>
+          <div className="learn-grid" style={{marginBottom:'2rem'}}>
+            {TRACKS.ai.map(s => <LearnCard key={s.num} {...s} />)}
+          </div>
         </div>
-        <div className="learn-grid" style={{marginBottom:'5rem'}}>
-          {TRACKS.ai.map(s => <LearnCard key={s.num} {...s} />)}
-        </div>
+      </section>
 
-        {/* Animation */}
-        <div className="sec-header">
-          <span className="sec-tag sec-tag-yellow">🎬 Learn Animation</span>
-          <h2 className="sec-title">Animation <span className="gradient-text-yellow">101</span></h2>
-          <p className="sec-sub">How to go from doodles to scenes that actually move people.</p>
+      {/* ── Animation Section ── */}
+      <section className="learn-section" id="animation">
+        <HexTronGrid cellSize={44} color="255,230,0" radius={2.8} />
+        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+          <div className="sec-header">
+            <span className="sec-tag sec-tag-yellow">🎬 Learn Animation</span>
+            <h2 className="sec-title">Animation <span className="gradient-text-yellow">101</span></h2>
+            <p className="sec-sub">How to go from doodles to scenes that actually move people.</p>
+          </div>
+          <div className="learn-grid-center">
+            {TRACKS.animation.map(s => <LearnCard key={s.num} {...s} />)}
+          </div>
         </div>
-        <div className="learn-grid-center">
-          {TRACKS.animation.map(s => <LearnCard key={s.num} {...s} />)}
-        </div>
+      </section>
 
-      </div>
-    </section>
+    </>
   )
 }
 

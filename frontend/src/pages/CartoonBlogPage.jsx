@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import HexGrid from '../components/HexGrid'
+import HexTronGrid from '../components/HexTronGrid'
 import { requireAuth } from '../lib/auth'
 import './CartoonBlogPage.css'
 
@@ -50,7 +50,7 @@ const POSTS = [
 export default function CartoonBlogPage() {
   return (
     <div className="cartoon-page">
-      <HexGrid color="255,230,0" radius={3} />
+      <HexTronGrid cellSize={44} color="255,230,0" radius={2.8} />
 
       {/* ── Hero ── */}
       <section className="cartoon-hero">

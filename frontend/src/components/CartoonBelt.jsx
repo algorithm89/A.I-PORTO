@@ -1,5 +1,5 @@
 import './CartoonBelt.css'
-import HexGrid from './HexGrid'
+import HexTronGrid from './HexTronGrid'
 import pic13 from '../assets/PIC13.png'
 import pic14 from '../assets/PIC14.png'
 import pic15 from '../assets/PIC15.jpg'
@@ -22,7 +22,7 @@ const FAVOURITES = [
 function CartoonBelt() {
   return (
     <div className="belt-wrap" id="animation">
-      <HexGrid color="255,230,0" radius={3.5} alwaysVisible />
+      <HexTronGrid cellSize={44} color="255,230,0" radius={2.8} />
       <div className="container" style={{position:'relative', zIndex:1}}>
         <div className="belt-header">
           <span className="sec-tag sec-tag-yellow">🎬 Favourite Animations</span>
