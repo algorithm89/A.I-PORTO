@@ -14,6 +14,7 @@ import TutorialsPage    from './pages/TutorialsPage'
 import CartoonBlogPage  from './pages/CartoonBlogPage'
 import NeonSpiritEpPage from './pages/NeonSpiritEp1Page'
 import AboutPage        from './pages/AboutPage'
+import ProtectedRoute   from './components/ProtectedRoute'
 
 function HomePage() {
   return (
@@ -37,8 +38,8 @@ function App() {
         <Route path="/blog"       element={<BlogPage />} />
         <Route path="/tutorials"  element={<TutorialsPage />} />
         <Route path="/cartoons"                   element={<CartoonBlogPage />} />
-        <Route path="/cartoons/neon-spirit/ep/:epNum/ch/:chNum" element={<NeonSpiritEpPage />} />
-        <Route path="/cartoons/neon-spirit/ep/:epNum"          element={<NeonSpiritEpPage />} />
+        <Route path="/cartoons/neon-spirit/ep/:epNum/ch/:chNum" element={<ProtectedRoute><NeonSpiritEpPage /></ProtectedRoute>} />
+        <Route path="/cartoons/neon-spirit/ep/:epNum"          element={<ProtectedRoute><NeonSpiritEpPage /></ProtectedRoute>} />
         <Route path="/about"                      element={<AboutPage />} />
       </Routes>
       <Footer />

@@ -654,3 +654,28 @@
   margin: 1rem 0;
   white-space: pre-wrap;
 }
+
+/* ── Chapter episode selector ── */
+.ap-select-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-family: 'Inter', sans-serif;
+}
+.ap-select {
+  flex: 1;
+  min-width: 180px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #e8fff2;
+  padding: 0.5rem 0.75rem;
+  border-radius: 7px;
+  font-size: 0.82rem;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  cursor: pointer;
+}
+.ap-select:focus { border-color: rgba(0,255,128,0.4); }
+.ap-select option { background: #070a0f; color: #e8fff2; }

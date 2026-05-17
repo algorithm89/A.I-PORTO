@@ -375,10 +375,14 @@ export default function NeonSpiritEpPage() {
               />
             )}
             {episode && !chapter && !loading && !notFound && (
-              <div className="ns-script-placeholder">
-                <span>📝</span>
-                <p>No chapters yet. The author is working on it!</p>
-              </div>
+              episode.content
+                ? <div className="ns-content" dangerouslySetInnerHTML={{ __html: episode.content }} />
+                : (
+                  <div className="ns-script-placeholder">
+                    <span>📝</span>
+                    <p>No chapters yet. The author is working on it!</p>
+                  </div>
+                )
             )}
           </>
         )}

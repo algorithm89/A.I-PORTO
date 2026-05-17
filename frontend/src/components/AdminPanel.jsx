@@ -6,7 +6,7 @@ import './AdminPanel.css'
 const API = `${import.meta.env.VITE_API_URL}/api/admin`
 
 function AdminPanel({ onClose }) {
-  const [tab, setTab] = useState('users') // 'users' | 'episodes'
+  const [tab, setTab] = useState('users') // 'users' | 'episodes' | 'chapters'
 
   // ── Users state ──
   const [users,   setUsers]   = useState([])
@@ -23,6 +23,16 @@ function AdminPanel({ onClose }) {
   const [formatting, setFormatting] = useState(false)
   const [saving, setSaving] = useState(false)
   const [preview, setPreview] = useState(false)
+
+  // ── Chapters state ──
+  const [chEpisodeId, setChEpisodeId] = useState('')
+  const [chapters, setChapters] = useState([])
+  const [chLoading, setChLoading] = useState(false)
+  const [chEditing, setChEditing] = useState(null) // chapter being edited, 'new', or null
+  const [chForm, setChForm] = useState({ chapterNumber: '', title: '', rawText: '', content: '' })
+  const [chFormatting, setChFormatting] = useState(false)
+  const [chSaving, setChSaving] = useState(false)
+  const [chPreview, setChPreview] = useState(false)
 
   const token = localStorage.getItem('token')
   const authHeaders = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
@@ -86,7 +96,7 @@ function AdminPanel({ onClose }) {
     finally { setEpLoading(false) }
   }, [])
 
-  useEffect(() => { if (tab === 'episodes') fetchEpisodes() }, [tab, fetchEpisodes])
+  useEffect(() => { if (tab === 'episodes' || tab === 'chapters') fetchEpisodes() }, [tab, fetchEpisodes])
 
   function startNewEpisode() {
     setEditing('new')
@@ -154,6 +164,88 @@ function AdminPanel({ onClose }) {
   }
 
   // ═══════════════════════════════════════════
+  //  CHAPTERS
+  // ═══════════════════════════════════════════
+  const fetchChapters = useCallback(async (episodeId) => {
+    if (!episodeId) { setChapters([]); return }
+    setChLoading(true)
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/episodes/${episodeId}/chapters`)
+      if (!res.ok) throw new Error(`Server returned ${res.status}`)
+      setChapters(await res.json())
+    } catch (e) { setError(e.message) }
+    finally { setChLoading(false) }
+  }, [])
+
+  function selectChapterEpisode(id) {
+    setChEpisodeId(id)
+    setChEditing(null)
+    fetchChapters(id)
+  }
+
+  function startNewChapter() {
+    if (!chEpisodeId) { setError('Pick an episode first.'); return }
+    setChEditing('new')
+    setChForm({ chapterNumber: chapters.length + 1, title: '', rawText: '', content: '' })
+    setChPreview(false)
+  }
+
+  function startEditChapter(ch) {
+    setChEditing(ch.id)
+    setChForm({ chapterNumber: ch.chapterNumber, title: ch.title || '', rawText: '', content: ch.content || '' })
+    setChPreview(false)
+  }
+
+  async function handleChapterAIFormat() {
+    if (!chForm.rawText.trim()) { setError('Please paste some story text first.'); return }
+    setChFormatting(true)
+    setError(null)
+    try {
+      const res = await fetch(`${API}/episodes/format`, {
+        method: 'POST', headers: authHeaders,
+        body: JSON.stringify({ rawText: chForm.rawText }),
+      })
+      const data = await res.json()
+      if (!data.success) throw new Error(data.message)
+      setChForm(prev => ({ ...prev, content: data.message }))
+      setChPreview(true)
+    } catch (e) { setError(e.message) }
+    finally { setChFormatting(false) }
+  }
+
+  async function handleSaveChapter() {
+    if (!chEpisodeId || !chForm.chapterNumber) {
+      setError('Episode and chapter number are required.'); return
+    }
+    setChSaving(true)
+    setError(null)
+    try {
+      const body = {
+        chapterNumber: parseInt(chForm.chapterNumber, 10),
+        title: chForm.title,
+        content: chForm.content,
+      }
+      const url = chEditing === 'new'
+        ? `${API}/chapters?episodeId=${chEpisodeId}`
+        : `${API}/chapters/${chEditing}`
+      const method = chEditing === 'new' ? 'POST' : 'PUT'
+      const res = await fetch(url, { method, headers: authHeaders, body: JSON.stringify(body) })
+      if (!res.ok) throw new Error(`Save failed: ${res.status}`)
+      setChEditing(null)
+      fetchChapters(chEpisodeId)
+    } catch (e) { setError(e.message) }
+    finally { setChSaving(false) }
+  }
+
+  async function deleteChapter(id) {
+    try {
+      const res = await fetch(`${API}/chapters/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } })
+      if (!res.ok) throw new Error(`Delete failed: ${res.status}`)
+      setChapters(prev => prev.filter(c => c.id !== id))
+    } catch (e) { setError(e.message) }
+  }
+
+  // ═══════════════════════════════════════════
   //  RENDER
   // ═══════════════════════════════════════════
   return (
@@ -178,6 +270,7 @@ function AdminPanel({ onClose }) {
         <div className="ap-tabs">
           <button className={`ap-tab ${tab === 'users' ? 'ap-tab-active' : ''}`} onClick={() => { setTab('users'); setError(null) }}>👥 Users</button>
           <button className={`ap-tab ${tab === 'episodes' ? 'ap-tab-active' : ''}`} onClick={() => { setTab('episodes'); setError(null) }}>📖 Episodes</button>
+          <button className={`ap-tab ${tab === 'chapters' ? 'ap-tab-active' : ''}`} onClick={() => { setTab('chapters'); setError(null) }}>📑 Chapters</button>
         </div>
 
         {/* Error */}
@@ -324,6 +417,107 @@ function AdminPanel({ onClose }) {
                         <td className="ap-actions">
                           <button className="ap-btn-edit" onClick={() => startEditEpisode(ep)}>✏️ Edit</button>
                           <button className="ap-btn-delete" onClick={() => { if (window.confirm('Delete this episode?')) deleteEpisode(ep.id) }}>🗑</button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </>
+        )}
+
+        {/* ═══════════════════════════════════════════
+            CHAPTERS TAB
+            ═══════════════════════════════════════════ */}
+        {tab === 'chapters' && (
+          <>
+            <div className="ap-stats">
+              <span className="ap-select-label">Episode</span>
+              <select className="ap-select" value={chEpisodeId} onChange={e => selectChapterEpisode(e.target.value)}>
+                <option value="">— Select an episode —</option>
+                {episodes.map(ep => (
+                  <option key={ep.id} value={ep.id}>{ep.series} — Ep {ep.episodeNumber}: {ep.title}</option>
+                ))}
+              </select>
+              <div className="ap-stat"><span className="ap-stat-num">{chapters.length}</span><span className="ap-stat-label">Chapters</span></div>
+              <button className="ap-refresh" onClick={() => fetchChapters(chEpisodeId)}>⟳ Refresh</button>
+              <button className="ap-btn-add" onClick={startNewChapter}>+ New Chapter</button>
+            </div>
+
+            {/* ── Chapter Editor ── */}
+            {chEditing && (
+              <div className="ap-editor">
+                <h3 className="ap-editor-title">{chEditing === 'new' ? '✍️ New Chapter' : '✏️ Edit Chapter'}</h3>
+
+                <div className="ap-editor-row">
+                  <label>Ch #</label>
+                  <input type="number" value={chForm.chapterNumber} onChange={e => setChForm(p => ({ ...p, chapterNumber: e.target.value }))} style={{ width: 70, flex: 'none' }} />
+                  <label>Title</label>
+                  <input value={chForm.title} onChange={e => setChForm(p => ({ ...p, title: e.target.value }))} placeholder="Chapter 1" />
+                </div>
+
+                <label className="ap-editor-label">📝 Paste raw story text</label>
+                <textarea
+                  className="ap-editor-textarea"
+                  value={chForm.rawText}
+                  onChange={e => setChForm(p => ({ ...p, rawText: e.target.value }))}
+                  placeholder="Paste your raw story here, then click '🤖 Format with AI'..."
+                  rows={10}
+                />
+                <div className="ap-editor-actions">
+                  <button className="ap-btn-ai" onClick={handleChapterAIFormat} disabled={chFormatting || !chForm.rawText.trim()}>
+                    {chFormatting ? '⏳ Formatting...' : '🤖 Format with AI'}
+                  </button>
+                  <button className="ap-btn-preview" onClick={() => setChPreview(!chPreview)} disabled={!chForm.content}>
+                    {chPreview ? '📝 Edit HTML' : '👁 Preview'}
+                  </button>
+                </div>
+
+                {chPreview ? (
+                  <div className="ap-preview-box ns-content" dangerouslySetInnerHTML={{ __html: chForm.content }} />
+                ) : (
+                  <>
+                    <label className="ap-editor-label">📄 HTML Content</label>
+                    <textarea
+                      className="ap-editor-textarea ap-editor-html"
+                      value={chForm.content}
+                      onChange={e => setChForm(p => ({ ...p, content: e.target.value }))}
+                      placeholder="Formatted HTML will appear here after AI formatting, or paste your own..."
+                      rows={14}
+                    />
+                  </>
+                )}
+
+                <div className="ap-editor-actions">
+                  <button className="ap-btn-save" onClick={handleSaveChapter} disabled={chSaving}>
+                    {chSaving ? '💾 Saving...' : '💾 Save Chapter'}
+                  </button>
+                  <button className="ap-btn-cancel" onClick={() => setChEditing(null)}>Cancel</button>
+                </div>
+              </div>
+            )}
+
+            {/* ── Chapters Table ── */}
+            <div className="ap-table-wrap">
+              {!chEpisodeId ? (
+                <div className="ap-empty">Select an episode above to manage its chapters.</div>
+              ) : chLoading ? (
+                <div className="ap-loading"><div className="ap-spinner" /><span>Loading chapters…</span></div>
+              ) : chapters.length === 0 ? (
+                <div className="ap-empty">No chapters yet. Click "+ New Chapter" to create one.</div>
+              ) : (
+                <table className="ap-table">
+                  <thead><tr><th>ID</th><th>Ch</th><th>Title</th><th>Actions</th></tr></thead>
+                  <tbody>
+                    {chapters.map(c => (
+                      <tr key={c.id} className="ap-row">
+                        <td className="ap-id">#{c.id}</td>
+                        <td>{c.chapterNumber}</td>
+                        <td className="ap-username">{c.title || `Chapter ${c.chapterNumber}`}</td>
+                        <td className="ap-actions">
+                          <button className="ap-btn-edit" onClick={() => startEditChapter(c)}>✏️ Edit</button>
+                          <button className="ap-btn-delete" onClick={() => { if (window.confirm('Delete this chapter?')) deleteChapter(c.id) }}>🗑</button>
                         </td>
                       </tr>
                     ))}
