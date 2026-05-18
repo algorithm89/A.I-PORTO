@@ -1,159 +1,43 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import TriGrid3D from '../components/TriGrid3D'
-import { requireAuth } from '../lib/auth'
 import './TutorialsPage.css'
 
-const TUTORIALS = [
-  // ── 1. Math for AI
-  {
-    id: 1,
-    track: 'Math for AI',
-    color: 'cyan',
-    emoji: '🧮',
-    level: 'Beginner',
-    title: 'Why Linear Algebra Actually Matters for AI',
-    excerpt: 'Vectors, matrices, dot products — these are not abstract maths. They are literally how neural networks compute. Let\'s make it visual and real.',
-    duration: '12 min',
-    tags: ['linear algebra', 'math', 'foundations'],
-  },
-  {
-    id: 2,
-    track: 'Math for AI',
-    color: 'cyan',
-    emoji: '📊',
-    level: 'Beginner',
-    title: 'Probability & Statistics for Machine Learning',
-    excerpt: 'Every ML model is making probabilistic guesses. This guide covers distributions, Bayes theorem and the intuitions you need without drowning in notation.',
-    duration: '15 min',
-    tags: ['statistics', 'probability', 'math'],
-  },
-  {
-    id: 3,
-    track: 'Math for AI',
-    color: 'cyan',
-    emoji: '📐',
-    level: 'Intermediate',
-    title: 'Calculus for Deep Learning — Gradients Made Simple',
-    excerpt: 'Backpropagation is just the chain rule. This tutorial walks through derivatives, partial derivatives and gradient descent with clear visual examples.',
-    duration: '18 min',
-    tags: ['calculus', 'gradients', 'deep learning'],
-  },
-
-  // ── 2. Titanic ML Project
-  {
-    id: 4,
-    track: 'Titanic Project',
-    color: 'pink',
-    emoji: '🚢',
-    level: 'Beginner',
-    title: 'Titanic Survival Prediction — Your First Real ML Project',
-    excerpt: 'The classic Kaggle challenge. Load the data, explore it visually, clean missing values, and train your first classifier. Step by step, no shortcuts.',
-    duration: '25 min',
-    tags: ['titanic', 'kaggle', 'classification'],
-  },
-  {
-    id: 5,
-    track: 'Titanic Project',
-    color: 'pink',
-    emoji: '🔍',
-    level: 'Beginner',
-    title: 'Titanic EDA — What the Data Actually Tells You',
-    excerpt: 'Before you train anything, look at the data. Survival by class, age, sex, fare — the patterns are fascinating and they guide every feature engineering decision.',
-    duration: '15 min',
-    tags: ['EDA', 'pandas', 'visualization'],
-  },
-  {
-    id: 6,
-    track: 'Titanic Project',
-    color: 'pink',
-    emoji: '🎯',
-    level: 'Intermediate',
-    title: 'Titanic — Feature Engineering & Model Comparison',
-    excerpt: 'Go beyond the basics. Create new features from names, cabins and tickets. Compare Logistic Regression, Random Forest and XGBoost. See which one wins and why.',
-    duration: '30 min',
-    tags: ['feature engineering', 'xgboost', 'model comparison'],
-  },
-
-  // ── 3. Biometric System
-  {
-    id: 7,
-    track: 'Biometric System',
-    color: 'purple',
-    emoji: '🔐',
-    level: 'Intermediate',
-    title: 'Building a Biometric Authentication System with Python',
-    excerpt: 'Face recognition, fingerprint matching, voice identification — how biometric systems actually work under the hood. We build one from scratch.',
-    duration: '35 min',
-    tags: ['biometrics', 'face recognition', 'security'],
-  },
-  {
-    id: 8,
-    track: 'Biometric System',
-    color: 'purple',
-    emoji: '👁️',
-    level: 'Intermediate',
-    title: 'Face Detection & Recognition with OpenCV and dlib',
-    excerpt: 'Detect faces in real-time, extract embeddings, and match identities. A practical walkthrough using OpenCV, dlib and face_recognition library.',
-    duration: '28 min',
-    tags: ['opencv', 'face detection', 'dlib'],
-  },
-  {
-    id: 9,
-    track: 'Biometric System',
-    color: 'purple',
-    emoji: '🏗️',
-    level: 'Advanced',
-    title: 'Deploying a Biometric API with FastAPI & Docker',
-    excerpt: 'Turn your biometric model into a production-ready REST API. Authentication flow, image upload, matching endpoint — containerised and ready to ship.',
-    duration: '40 min',
-    tags: ['fastapi', 'docker', 'deployment'],
-  },
-
-  // ── 4. Accountability Bot (Twilio + GPT)
-  {
-    id: 10,
-    track: 'Accountability Bot',
-    color: 'yellow',
-    emoji: '📱',
-    level: 'Intermediate',
-    title: 'Build an Accountability Bot with Twilio & GPT',
-    excerpt: 'A WhatsApp bot that checks in on you daily, tracks your goals, and uses GPT to give you personalised encouragement. The ultimate AI accountability partner.',
-    duration: '35 min',
-    tags: ['twilio', 'gpt', 'whatsapp'],
-  },
-  {
-    id: 11,
-    track: 'Accountability Bot',
-    color: 'yellow',
-    emoji: '🤖',
-    level: 'Intermediate',
-    title: 'Integrating OpenAI GPT for Smart Conversations',
-    excerpt: 'Connect your bot to GPT-4. Craft system prompts that make it an encouraging coach — not just a chatbot. Handle context, memory and conversation flow.',
-    duration: '25 min',
-    tags: ['openai', 'prompt engineering', 'chatbot'],
-  },
-  {
-    id: 12,
-    track: 'Accountability Bot',
-    color: 'yellow',
-    emoji: '🚀',
-    level: 'Advanced',
-    title: 'Deploying Your Twilio Bot to Production',
-    excerpt: 'Webhooks, ngrok for testing, then deploy to a real server. Add scheduled messages, goal tracking database, and weekly progress reports via WhatsApp.',
-    duration: '30 min',
-    tags: ['deployment', 'webhooks', 'scheduling'],
-  },
-]
+const API = import.meta.env.VITE_API_URL || ''
 
 const TRACKS = ['All', 'Math for AI', 'Titanic Project', 'Biometric System', 'Accountability Bot']
-const LEVELS  = ['All Levels', 'Beginner', 'Intermediate', 'Advanced']
+const LEVELS = ['All Levels', 'Beginner', 'Intermediate', 'Advanced']
+
+const TRACK_COLOR = {
+  'Math for AI': 'cyan',
+  'Titanic Project': 'pink',
+  'Biometric System': 'purple',
+  'Accountability Bot': 'yellow',
+}
 
 export default function TutorialsPage() {
-  const [track,  setTrack]  = useState('All')
-  const [level,  setLevel]  = useState('All Levels')
+  const [tutorials, setTutorials] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [track, setTrack] = useState('All')
+  const [level, setLevel] = useState('All Levels')
 
-  const filtered = TUTORIALS.filter(t => {
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch(`${API}/api/tutorials`)
+        if (!res.ok) throw new Error(`Server returned ${res.status}`)
+        setTutorials(await res.json())
+      } catch (e) {
+        setError(e.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [])
+
+  const filtered = tutorials.filter(t => {
     const trackOk = track === 'All' || t.track === track
     const levelOk = level === 'All Levels' || t.level === level
     return trackOk && levelOk
@@ -176,7 +60,7 @@ export default function TutorialsPage() {
             biometric systems and an AI accountability bot. No fluff, no imposter syndrome required.
           </p>
           <div className="tut-stats">
-            <div className="tut-stat"><span className="tut-stat-num">{TUTORIALS.length}</span><span className="tut-stat-label">Tutorials</span></div>
+            <div className="tut-stat"><span className="tut-stat-num">{tutorials.length}</span><span className="tut-stat-label">Tutorials</span></div>
             <div className="tut-stat"><span className="tut-stat-num">{TRACKS.length - 1}</span><span className="tut-stat-label">Tracks</span></div>
             <div className="tut-stat"><span className="tut-stat-num">Free</span><span className="tut-stat-label">Always</span></div>
           </div>
@@ -205,39 +89,42 @@ export default function TutorialsPage() {
 
       {/* ── Tutorials grid ── */}
       <section className="tut-grid-section container">
-        {filtered.length === 0 ? (
+        {loading ? (
+          <div className="tut-empty"><span>⏳</span><p>Loading tutorials…</p></div>
+        ) : error ? (
+          <div className="tut-empty"><span>⚠️</span><p>Couldn't load tutorials: {error}</p></div>
+        ) : filtered.length === 0 ? (
           <div className="tut-empty">
             <span>🤷</span>
-            <p>No tutorials match those filters yet — more coming soon!</p>
+            <p>{tutorials.length === 0
+              ? 'No tutorials published yet — check back soon!'
+              : 'No tutorials match those filters yet.'}</p>
           </div>
         ) : (
           <div className="tut-grid">
-            {filtered.map(tut => (
-              <article key={tut.id} className={`tut-card tc-${tut.color}`}>
-                <div className="tc-top">
-                  <span className="tc-emoji">{tut.emoji}</span>
-                  <div className="tc-top-right">
-                    <span className={`tc-track tc-track-${tut.color}`}>{tut.track}</span>
-                    <span className={`tc-level tc-level-${tut.level.toLowerCase()}`}>{tut.level}</span>
+            {filtered.map(tut => {
+              const color = TRACK_COLOR[tut.track] || 'cyan'
+              return (
+                <article key={tut.id} className={`tut-card tc-${color}`}>
+                  <div className="tc-top">
+                    <span className="tc-emoji">🤖</span>
+                    <div className="tc-top-right">
+                      {tut.track && <span className={`tc-track tc-track-${color}`}>{tut.track}</span>}
+                      {tut.level && <span className={`tc-level tc-level-${tut.level.toLowerCase()}`}>{tut.level}</span>}
+                    </div>
                   </div>
-                </div>
 
-                <h2 className="tc-title">{tut.title}</h2>
-                <p className="tc-excerpt">{tut.excerpt}</p>
+                  <h2 className="tc-title">{tut.title}</h2>
+                  <p className="tc-excerpt">{tut.excerpt}</p>
 
-                <div className="tc-footer">
-                  <div className="tc-tags">
-                    {tut.tags.map(tag => (
-                      <span key={tag} className={`tc-tag tc-tag-${tut.color}`}>#{tag}</span>
-                    ))}
+                  <div className="tc-footer">
+                    <div className="tc-actions">
+                      <Link to={`/tutorials/${tut.slug}/part/1`} className={`tc-btn tc-btn-${color}`}>Read →</Link>
+                    </div>
                   </div>
-                  <div className="tc-actions">
-                    <span className="tc-duration">⏱ {tut.duration}</span>
-                    <a href="#" className={`tc-btn tc-btn-${tut.color}`} onClick={e => { e.preventDefault(); requireAuth() }}>Read →</a>
-                  </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              )
+            })}
           </div>
         )}
       </section>

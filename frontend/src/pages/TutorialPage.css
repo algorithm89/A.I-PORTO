@@ -1,0 +1,127 @@
+/* ══════════════════════════
+   TUTORIAL READER PAGE
+══════════════════════════ */
+.tut-read-page {
+  position: relative;
+  min-height: 100vh;
+  padding-bottom: 4rem;
+}
+
+.tut-read-back {
+  position: relative;
+  z-index: 1;
+  padding-top: 1.5rem;
+}
+.tut-read-back-link {
+  color: var(--neon-cyan);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+}
+.tut-read-back-link:hover { text-decoration: underline; }
+
+/* ── Header ── */
+.tut-read-header {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 2rem 0 0.5rem;
+}
+.tut-read-title {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 900;
+  letter-spacing: -1px;
+  line-height: 1.15;
+  color: var(--text-primary);
+  margin: 1rem 0 0.8rem;
+}
+.tut-read-meta {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.tut-read-dot { opacity: 0.4; }
+
+/* ── Part navigation ── */
+.tut-read-nav {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  padding: 1.2rem 0 0.5rem;
+}
+.tut-read-tab {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 0.4rem 0.95rem;
+  border-radius: 100px;
+  color: var(--text-secondary);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  background: rgba(0, 229, 255, 0.04);
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s ease;
+}
+.tut-read-tab:hover {
+  color: var(--neon-cyan);
+  border-color: rgba(0, 229, 255, 0.5);
+}
+.tut-read-tab-active {
+  color: var(--neon-cyan);
+  border-color: var(--neon-cyan);
+  background: rgba(0, 229, 255, 0.12);
+  box-shadow: 0 0 14px rgba(0, 229, 255, 0.2);
+}
+
+/* ── Part title ── */
+.tut-read-part-title {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 1.2rem 0 0.3rem;
+}
+.tut-read-part-title h2 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  color: var(--neon-cyan);
+}
+
+/* ── Body ── */
+.tut-read-body {
+  position: relative;
+  z-index: 1;
+  padding: 1.5rem 1rem 2rem;
+}
+
+.tut-read-placeholder {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: var(--text-muted);
+}
+.tut-read-placeholder span {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+/* ── Footer navigation ── */
+.tut-read-footer-nav {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem 1rem 0;
+}
+
+@media (max-width: 600px) {
+  .tut-read-footer-nav { font-size: 0.8rem; }
+}

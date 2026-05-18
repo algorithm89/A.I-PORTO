@@ -46,6 +46,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/episodes/summaries").permitAll()
                         // Episodes & chapters — registered, logged-in users only
                         .requestMatchers("/api/episodes/**").authenticated()
+                        // Tutorials — public read, admin write
+                        .requestMatchers("/api/tutorials/**").permitAll()
                         // Admin endpoints — ADMIN role required
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         // Everything else requires authentication
