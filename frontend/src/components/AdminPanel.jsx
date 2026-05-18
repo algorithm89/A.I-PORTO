@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import TriangleGrid from './TriangleGrid'
-import pic24 from '../assets/PIC24.png'
+import pic24 from '../assets/PIC24.webp'
 import './AdminPanel.css'
 
 const API = `${import.meta.env.VITE_API_URL}/api/admin`

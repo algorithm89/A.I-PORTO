@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import HexTronGrid from '../components/HexTronGrid'
-import pic10 from '../assets/PIC10.png'
+import pic10 from '../assets/PIC10.webp'
 import './NeonSpiritEp1Page.css'
 
 const API = import.meta.env.VITE_API_URL || ''

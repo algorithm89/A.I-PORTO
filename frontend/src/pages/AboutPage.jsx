@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import TronGrid from '../components/TronGrid'
 import './AboutPage.css'
-import pic4  from '../assets/PIC4.png'
+import pic4  from '../assets/PIC4.webp'
 
 export default function AboutPage() {
   return (

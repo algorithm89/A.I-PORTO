@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import './Header.css'
-import logo from '../assets/LOGO.png'
+import logo from '../assets/LOGO.webp'
 import RegisterForm from './RegisterForm'
 import LoginForm    from './LoginForm'
 import AdminPanel   from './AdminPanel'

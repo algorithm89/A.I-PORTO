@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
 import './CategoryCards.css'
-import picAbout     from '../assets/PIC4.png'
-import picTutorials from '../assets/PIC8.jpg'
-import picBlog      from '../assets/PIC9.jpg'
-import picCartoons  from '../assets/PIC10.png'
+import picAbout     from '../assets/PIC4.webp'
+import picTutorials from '../assets/PIC8.webp'
+import picBlog      from '../assets/PIC9.webp'
+import picCartoons  from '../assets/PIC10.webp'
 
 const CATEGORIES = [
   {

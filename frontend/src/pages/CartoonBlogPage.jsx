@@ -4,7 +4,7 @@ import HexTronGrid from '../components/HexTronGrid'
 import { requireAuth } from '../lib/auth'
 import './CartoonBlogPage.css'
 
-import pic10 from '../assets/PIC10.png'
+import pic10 from '../assets/PIC10.webp'
 
 const API = import.meta.env.VITE_API_URL || ''
 

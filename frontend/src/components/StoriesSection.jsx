@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom'
 import './StoriesSection.css'
 import TronGrid from './TronGrid'
-import pic8  from '../assets/PIC8.jpg'
-import pic4  from '../assets/PIC4.png'
-import pic7  from '../assets/PIC7.jpg'
-import pic10 from '../assets/PIC10.png'
+import pic8  from '../assets/PIC8.webp'
+import pic4  from '../assets/PIC4.webp'
+import pic7  from '../assets/PIC7.webp'
+import pic10 from '../assets/PIC10.webp'
 
 
 

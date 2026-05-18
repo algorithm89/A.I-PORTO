@@ -1,12 +1,12 @@
 import './CartoonBelt.css'
 import HexTronGrid from './HexTronGrid'
-import pic13 from '../assets/PIC13.png'
-import pic14 from '../assets/PIC14.png'
-import pic15 from '../assets/PIC15.jpg'
-import pic16 from '../assets/PIC16.png'
-import pic18 from '../assets/PIC18.png'
-import pic19 from '../assets/PIC19.png'
-import pic20 from '../assets/PIC20.png'
+import pic13 from '../assets/PIC13.webp'
+import pic14 from '../assets/PIC14.webp'
+import pic15 from '../assets/PIC15.webp'
+import pic16 from '../assets/PIC16.webp'
+import pic18 from '../assets/PIC18.webp'
+import pic19 from '../assets/PIC19.webp'
+import pic20 from '../assets/PIC20.webp'
 
 
 const FAVOURITES = [

@@ -1,8 +1,8 @@
 import './Hero.css'
 import TronGrid   from './TronGrid'
 import IcyEffect  from './IcyEffect'
-import logo  from '../assets/LOGO.png'
-import polar from '../assets/POLAR.png'
+import logo  from '../assets/LOGO.webp'
+import polar from '../assets/POLAR.webp'
 
 function Hero() {
   return (
