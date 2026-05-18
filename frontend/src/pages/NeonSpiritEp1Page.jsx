@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
-import HexGrid from '../components/HexGrid'
+import HexTronGrid from '../components/HexTronGrid'
 import pic10 from '../assets/PIC10.png'
 import './NeonSpiritEp1Page.css'
 
@@ -194,7 +194,7 @@ export default function NeonSpiritEpPage() {
 
   return (
     <div className="ns-page">
-      <HexGrid color="255,230,0" radius={3} />
+      <HexTronGrid cellSize={44} color="255,230,0" radius={2.8} />
 
       <div className="ns-back container">
         <Link to="/cartoons" className="ns-back-link">← Back to Cartoon Blog</Link>
