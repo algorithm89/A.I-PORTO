@@ -1,21 +1,18 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
+// Canvas honeycomb grid. Lights up hexes near the pointer.
+// - Desktop: reacts to mouse hover.
+// - Mobile: reacts to touch (lights up under your finger as you drag).
+// - The animation loop pauses when nothing is lit and the pointer is away,
+//   so it costs zero CPU while idle.
 function HexTronGrid({ cellSize = 50, color = '0,229,255', radius = 2.5 }) {
   const canvasRef = useRef(null)
-  const mouse     = useRef({ x: -999, y: -999 })
+  const mouse     = useRef({ x: -9999, y: -9999 })
   const hexes     = useRef([])
   const raf       = useRef(null)
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
+  const running   = useRef(false)
 
   useEffect(() => {
-    const mq = window.matchMedia('(max-width: 767px)')
-    const handler = (e) => setIsMobile(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [])
-
-  useEffect(() => {
-    if (isMobile) return  // don't start canvas on mobile
     const canvas = canvasRef.current
     const parent = canvas.parentElement
     let W, H
@@ -52,8 +49,8 @@ function HexTronGrid({ cellSize = 50, color = '0,229,255', radius = 2.5 }) {
       ctx.clearRect(0, 0, W, H)
       const mx = mouse.current.x
       const my = mouse.current.y
+      let active = false
 
-      // lit hexes near mouse — only visible on hover
       hexes.current.forEach(h => {
         const dist   = Math.hypot(mx - h.cx, my - h.cy)
         const target = dist < cellSize * radius
@@ -62,6 +59,7 @@ function HexTronGrid({ cellSize = 50, color = '0,229,255', radius = 2.5 }) {
         h.alpha += (target - h.alpha) * 0.15
 
         if (h.alpha > 0.01) {
+          active = true
           ctx.beginPath()
           for (let i = 0; i < 6; i++) {
             const vx = h.cx + cellSize * HEX[i].x
@@ -81,31 +79,57 @@ function HexTronGrid({ cellSize = 50, color = '0,229,255', radius = 2.5 }) {
         }
       })
 
-      raf.current = requestAnimationFrame(draw)
+      // Idle-pause: keep looping only while something is still lit/fading.
+      if (active) {
+        raf.current = requestAnimationFrame(draw)
+      } else {
+        running.current = false
+      }
+    }
+
+    function kick() {
+      if (!running.current) {
+        running.current = true
+        raf.current = requestAnimationFrame(draw)
+      }
+    }
+
+    function pointFrom(e) {
+      const rect = canvas.getBoundingClientRect()
+      const src = e.touches && e.touches[0] ? e.touches[0] : e
+      return { x: src.clientX - rect.left, y: src.clientY - rect.top }
     }
 
     function onMove(e) {
-      const rect = canvas.getBoundingClientRect()
-      mouse.current = { x: e.clientX - rect.left, y: e.clientY - rect.top }
+      mouse.current = pointFrom(e)
+      kick()
     }
-    function onLeave() { mouse.current = { x: -999, y: -999 } }
+    function onLeave() {
+      mouse.current = { x: -9999, y: -9999 }
+      kick()
+    }
 
     resize()
     const ro = new ResizeObserver(resize)
     ro.observe(parent)
     parent.addEventListener('mousemove', onMove)
     parent.addEventListener('mouseleave', onLeave)
-    draw()
+    parent.addEventListener('touchstart', onMove, { passive: true })
+    parent.addEventListener('touchmove', onMove, { passive: true })
+    parent.addEventListener('touchend', onLeave)
 
     return () => {
       cancelAnimationFrame(raf.current)
+      running.current = false
       ro.disconnect()
       parent.removeEventListener('mousemove', onMove)
       parent.removeEventListener('mouseleave', onLeave)
+      parent.removeEventListener('touchstart', onMove)
+      parent.removeEventListener('touchmove', onMove)
+      parent.removeEventListener('touchend', onLeave)
     }
-  }, [isMobile, cellSize, color, radius])
+  }, [cellSize, color, radius])
 
-  if (isMobile) return null
   return <canvas ref={canvasRef} style={{
     position: 'absolute',
     inset: 0,
