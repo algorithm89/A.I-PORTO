@@ -39,6 +39,8 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: prod
       VAULT_TOKEN: ${VAULT_TOKEN}
+    volumes:
+      - uploads:/app/uploads
     restart: unless-stopped
 
   frontend:
@@ -60,4 +62,5 @@ services:
 
 volumes:
   ollama_data:
+  uploads:
 

@@ -48,6 +48,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/episodes/**").authenticated()
                         // Tutorials — public read, admin write
                         .requestMatchers("/api/tutorials/**").permitAll()
+                        // Uploaded images — public read (upload itself is under /api/admin)
+                        .requestMatchers("/api/uploads/**").permitAll()
                         // Admin endpoints — ADMIN role required
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         // Everything else requires authentication

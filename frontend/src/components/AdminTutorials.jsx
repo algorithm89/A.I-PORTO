@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import ImageUploadButton from './ImageUploadButton'
 
 const API = import.meta.env.VITE_API_URL || ''
 const TRACKS = ['Math for AI', 'Titanic Project', 'Biometric System', 'Accountability Bot']
@@ -261,6 +262,14 @@ export default function AdminTutorials({ token, onError }) {
                 <button className="ap-btn-preview" onClick={() => setPartPreview(!partPreview)} disabled={!partForm.content}>
                   {partPreview ? '📝 Edit HTML' : '👁 Preview'}
                 </button>
+                <ImageUploadButton
+                  token={token}
+                  onError={onError}
+                  onUploaded={url => {
+                    setPartForm(p => ({ ...p, content: `${p.content}\n<img src="${url}" alt="" />\n` }))
+                    setPartPreview(false)
+                  }}
+                />
               </div>
 
               {partPreview ? (
