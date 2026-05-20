@@ -3,7 +3,7 @@ title: Build a Face Recognition System in Python
 track: Biometric System
 level: Beginner
 excerpt: Install Python, set up a code editor, and confirm your webcam works — the foundation the whole face-recognition series builds on.
-cover: CodeEDitor.png
+cover: biometrics.png
 partTitle: Part 1 — Setting Up Your Environment
 order: 1
 ---
@@ -24,6 +24,9 @@ We need Python 3.12 (or 3.11). Avoid 3.13 for now — some libraries we use don'
 
 1. Go to [python.org/downloads](https://python.org/downloads) and download Python 3.12.
 2. Run the installer. **Critical:** on the first screen, tick ✅ "Add Python to PATH" before clicking Install. This one checkbox prevents the most common beginner headache.
+
+![Tick "Add python.exe to PATH" on the first installer screen](path.png)
+
 3. Verify it worked — open a terminal (on Windows: press Win, type `cmd`, Enter) and run:
 
 ```bash

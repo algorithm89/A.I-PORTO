@@ -138,13 +138,17 @@ export function renderMarkdown(body, options = {}) {
       continue
     }
 
-    // Ordered list
+    // Ordered list — honour the first item's number so a list broken by an
+    // image (or any other block) can resume at the right number.
     if (/^\s*\d+\.\s+/.test(line)) {
+      const firstMatch = line.match(/^\s*(\d+)\.\s+/)
+      const start = firstMatch ? Number(firstMatch[1]) : 1
       const items = []
       while (i < lines.length && /^\s*\d+\.\s+/.test(lines[i])) {
         items.push(lines[i].replace(/^\s*\d+\.\s+/, '')); i++
       }
-      html.push(`<ol>${items.map(it => `<li>${inline(it, resolveImage)}</li>`).join('')}</ol>`)
+      const startAttr = start !== 1 ? ` start="${start}"` : ''
+      html.push(`<ol${startAttr}>${items.map(it => `<li>${inline(it, resolveImage)}</li>`).join('')}</ol>`)
       continue
     }
 

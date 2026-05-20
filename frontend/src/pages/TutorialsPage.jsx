@@ -85,6 +85,12 @@ export default function TutorialsPage() {
               const color = TRACK_COLOR[tut.track] || 'cyan'
               return (
                 <article key={tut.slug} className={`tut-card tc-${color}`}>
+                  {tut.cover && (
+                    <div className="tc-cover">
+                      <img src={tut.cover} alt={tut.title} loading="lazy" />
+                    </div>
+                  )}
+
                   <div className="tc-top">
                     <span className="tc-emoji">🤖</span>
                     <div className="tc-top-right">
