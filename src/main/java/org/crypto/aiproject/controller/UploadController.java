@@ -22,8 +22,9 @@ import java.util.UUID;
 
 /**
  * Image uploads. Files are stored on disk (a Docker volume in prod) and
- * served back under /api/uploads/** so they can be embedded in episode and
- * tutorial content.
+ * served back under /api/uploads/** so they can be embedded in episode
+ * content. (Tutorials are now sourced statically from frontend/tuts and
+ * don't use this endpoint.)
  */
 @RestController
 public class UploadController {

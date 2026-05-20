@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import TriGrid3D from '../components/TriGrid3D'
+import { getTutorials } from '../lib/tutorials'
 import './TutorialsPage.css'
-
-const API = import.meta.env.VITE_API_URL || ''
 
 const TRACKS = ['All', 'Math for AI', 'Titanic Project', 'Biometric System', 'Accountability Bot']
 const LEVELS = ['All Levels', 'Beginner', 'Intermediate', 'Advanced']
@@ -16,26 +15,10 @@ const TRACK_COLOR = {
 }
 
 export default function TutorialsPage() {
-  const [tutorials, setTutorials] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  // Tutorials are loaded synchronously at build time from /tuts.
+  const tutorials = useMemo(() => getTutorials(), [])
   const [track, setTrack] = useState('All')
   const [level, setLevel] = useState('All Levels')
-
-  useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetch(`${API}/api/tutorials`)
-        if (!res.ok) throw new Error(`Server returned ${res.status}`)
-        setTutorials(await res.json())
-      } catch (e) {
-        setError(e.message)
-      } finally {
-        setLoading(false)
-      }
-    }
-    load()
-  }, [])
 
   const filtered = tutorials.filter(t => {
     const trackOk = track === 'All' || t.track === track
@@ -89,15 +72,11 @@ export default function TutorialsPage() {
 
       {/* ── Tutorials grid ── */}
       <section className="tut-grid-section container">
-        {loading ? (
-          <div className="tut-empty"><span>⏳</span><p>Loading tutorials…</p></div>
-        ) : error ? (
-          <div className="tut-empty"><span>⚠️</span><p>Couldn't load tutorials: {error}</p></div>
-        ) : filtered.length === 0 ? (
+        {filtered.length === 0 ? (
           <div className="tut-empty">
             <span>🤷</span>
             <p>{tutorials.length === 0
-              ? 'No tutorials published yet — check back soon!'
+              ? 'No tutorials published yet — drop a folder into /tuts to add one.'
               : 'No tutorials match those filters yet.'}</p>
           </div>
         ) : (
@@ -105,7 +84,7 @@ export default function TutorialsPage() {
             {filtered.map(tut => {
               const color = TRACK_COLOR[tut.track] || 'cyan'
               return (
-                <article key={tut.id} className={`tut-card tc-${color}`}>
+                <article key={tut.slug} className={`tut-card tc-${color}`}>
                   <div className="tc-top">
                     <span className="tc-emoji">🤖</span>
                     <div className="tc-top-right">

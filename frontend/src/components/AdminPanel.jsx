@@ -1,13 +1,12 @@
 import { useState, useEffect, useCallback } from 'react'
 import TriangleGrid from './TriangleGrid'
-import AdminTutorials from './AdminTutorials'
 import pic24 from '../assets/PIC24.webp'
 import './AdminPanel.css'
 
 const API = `${import.meta.env.VITE_API_URL}/api/admin`
 
 function AdminPanel({ onClose }) {
-  const [tab, setTab] = useState('users') // 'users' | 'episodes' | 'chapters' | 'tutorials'
+  const [tab, setTab] = useState('users') // 'users' | 'episodes' | 'chapters'
 
   // ── Users state ──
   const [users,   setUsers]   = useState([])
@@ -272,7 +271,6 @@ function AdminPanel({ onClose }) {
           <button className={`ap-tab ${tab === 'users' ? 'ap-tab-active' : ''}`} onClick={() => { setTab('users'); setError(null) }}>👥 Users</button>
           <button className={`ap-tab ${tab === 'episodes' ? 'ap-tab-active' : ''}`} onClick={() => { setTab('episodes'); setError(null) }}>📖 Episodes</button>
           <button className={`ap-tab ${tab === 'chapters' ? 'ap-tab-active' : ''}`} onClick={() => { setTab('chapters'); setError(null) }}>📑 Chapters</button>
-          <button className={`ap-tab ${tab === 'tutorials' ? 'ap-tab-active' : ''}`} onClick={() => { setTab('tutorials'); setError(null) }}>🎓 Tutorials</button>
         </div>
 
         {/* Error */}
@@ -528,13 +526,6 @@ function AdminPanel({ onClose }) {
               )}
             </div>
           </>
-        )}
-
-        {/* ═══════════════════════════════════════════
-            TUTORIALS TAB
-            ═══════════════════════════════════════════ */}
-        {tab === 'tutorials' && (
-          <AdminTutorials token={token} onError={setError} />
         )}
 
       </div>
