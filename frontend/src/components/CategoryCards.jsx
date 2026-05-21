@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import './CategoryCards.css'
+import TriangleGrid  from './TriangleGrid'
 import picAbout     from '../assets/PIC4.webp'
 import picTutorials from '../assets/PIC8.webp'
 import picBlog      from '../assets/PIC9.webp'
@@ -47,7 +48,8 @@ const CATEGORIES = [
 function CategoryCards() {
   return (
     <section className="categories-section" id="categories">
-      <div className="container">
+      <TriangleGrid size={58} color="0,255,128" radius={3} />
+      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
 
         <div className="sec-header">
           <span className="sec-tag sec-tag-pink">📚 Explore</span>

@@ -4,6 +4,7 @@ import Header           from './components/Header'
 import Hero             from './components/Hero'
 import StoriesSection   from './components/StoriesSection'
 import CartoonBelt      from './components/CartoonBelt'
+import OriginalCartoon  from './components/OriginalCartoon'
 import AISection        from './components/AISection'
 import CategoryCards    from './components/CategoryCards'
 import Footer           from './components/Footer'
@@ -23,6 +24,7 @@ function HomePage() {
       <Hero />
       <StoriesSection />
       <CartoonBelt />
+      <OriginalCartoon />
       <AISection />
       <CategoryCards />
     </>
