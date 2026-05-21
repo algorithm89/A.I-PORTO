@@ -115,6 +115,19 @@
   border-bottom-left-radius: 4px;
 }
 
+/* ── Inline links in assistant replies ── */
+.chatbot-link {
+  color: var(--neon-cyan);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(0, 229, 255, 0.35);
+  transition: color 0.15s, border-color 0.15s;
+}
+.chatbot-link:hover {
+  color: var(--neon-pink, #ff2d78);
+  border-bottom-color: var(--neon-pink, #ff2d78);
+}
+
 /* ── Typing indicator ── */
 .chatbot-typing {
   align-self: flex-start;

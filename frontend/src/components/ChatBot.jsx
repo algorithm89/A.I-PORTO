@@ -1,7 +1,39 @@
 import { useState, useRef, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import './ChatBot.css'
 
 const API_URL = import.meta.env.VITE_API_URL || ''
+
+// Turn Markdown links [label](url) in an assistant reply into clickable links.
+// Internal paths ("/tutorials") use React Router so navigation doesn't reload
+// the page; external URLs open in a new tab.
+const LINK_RE = /\[([^\]]+)\]\(([^)\s]+)\)/g
+function renderContent(text, onNavigate) {
+  const parts = []
+  let lastIndex = 0
+  let match
+  LINK_RE.lastIndex = 0
+  while ((match = LINK_RE.exec(text)) !== null) {
+    if (match.index > lastIndex) parts.push(text.slice(lastIndex, match.index))
+    const [full, label, url] = match
+    if (/^https?:\/\//.test(url)) {
+      parts.push(
+        <a key={parts.length} href={url} target="_blank" rel="noopener noreferrer" className="chatbot-link">
+          {label}
+        </a>
+      )
+    } else {
+      parts.push(
+        <Link key={parts.length} to={url} className="chatbot-link" onClick={onNavigate}>
+          {label}
+        </Link>
+      )
+    }
+    lastIndex = match.index + full.length
+  }
+  if (lastIndex < text.length) parts.push(text.slice(lastIndex))
+  return parts
+}
 
 export default function ChatBot() {
   const [open, setOpen]           = useState(false)
@@ -146,7 +178,9 @@ export default function ChatBot() {
             )}
             {messages.map((msg, i) => (
               <div key={i} className={`chatbot-msg chatbot-msg-${msg.role}`}>
-                {msg.content}
+                {msg.role === 'assistant'
+                  ? renderContent(msg.content, () => setOpen(false))
+                  : msg.content}
               </div>
             ))}
             {streaming && messages[messages.length - 1]?.content === '' && (
