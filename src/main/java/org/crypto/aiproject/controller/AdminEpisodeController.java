@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 import java.util.Map;
@@ -72,19 +73,25 @@ public class AdminEpisodeController {
 
     /**
      * POST /api/admin/episodes/format
-     * Sends raw story text to OpenAI, returns structured HTML with:
+     * Streams structured HTML built by OpenAI from raw story text:
      *   &lt;p class="ns-prose"&gt; for paragraphs
      *   &lt;hr class="ns-divider"/&gt; for scene breaks (___)
      *   &lt;pre class="ns-system-text"&gt; for cybernetic/system readouts
      *   &lt;h2&gt; for chapter titles
+     *
+     * The response is streamed (Server-Sent Events) so a long story keeps the
+     * proxy connection alive — a buffered request would otherwise exceed the
+     * nginx proxy_read_timeout and return a 504. Each event's data is a
+     * JSON-encoded HTML fragment, so newlines inside &lt;pre&gt; blocks survive
+     * the SSE line-framing.
      */
-    @PostMapping("/format")
-    public ResponseEntity<ApiResponse> formatWithAI(@RequestBody FormatRequest request) {
+    @PostMapping(value = "/format", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<String> formatWithAI(@RequestBody FormatRequest request) {
         log.info("ADMIN: AI formatting requested | text length={}", request.getRawText().length());
 
         String systemPrompt = """
                 You are a story formatter for a cyberpunk/sci-fi website. Convert the raw story text into clean HTML.
-                
+
                 Rules:
                 - Wrap every paragraph in <p class="ns-prose">...</p>
                 - Scene breaks (lines of underscores like _________) become <hr class="ns-divider"/>
@@ -94,7 +101,7 @@ public class AdminEpisodeController {
                 - Preserve ALL original text exactly. Don't summarize, don't change words, don't add content
                 - Don't wrap the output in ```html or any markdown fences — just return the raw HTML
                 - Don't add <html>, <body>, or <head> tags
-                
+
                 Return ONLY the formatted HTML, nothing else.""";
 
         List<Map<String, String>> messages = List.of(
@@ -105,30 +112,42 @@ public class AdminEpisodeController {
         Map<String, Object> body = Map.of(
                 "model", model,
                 "messages", messages,
-                "temperature", 0.2
+                "temperature", 0.2,
+                "stream", true
         );
 
-        try {
-            String response = webClient.post()
-                    .uri("/v1/chat/completions")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .bodyValue(body)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
-
-            JsonNode root = objectMapper.readTree(response);
-            String formatted = root.path("choices").path(0).path("message").path("content").asText();
-
-            // Clean any accidental markdown fences
-            formatted = formatted.replaceAll("^```html?\\s*", "").replaceAll("\\s*```$", "");
-
-            log.info("ADMIN: AI formatting complete | output length={}", formatted.length());
-            return ResponseEntity.ok(new ApiResponse(true, formatted));
-        } catch (Exception e) {
-            log.error("ADMIN: AI formatting failed", e);
-            return ResponseEntity.internalServerError()
-                    .body(new ApiResponse(false, "AI formatting failed: " + e.getMessage()));
-        }
+        return webClient.post()
+                .uri("/v1/chat/completions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(body)
+                .retrieve()
+                .bodyToFlux(String.class)
+                .mapNotNull(chunk -> {
+                    String trimmed = chunk.trim();
+                    if (trimmed.equals("[DONE]") || trimmed.equals("data: [DONE]")) return null;
+                    String data = chunk.startsWith("data: ") ? chunk.substring(6).trim() : trimmed;
+                    if (data.isEmpty()) return null;
+                    try {
+                        JsonNode node = objectMapper.readTree(data);
+                        JsonNode content = node.path("choices").path(0).path("delta").path("content");
+                        if (!content.isMissingNode() && !content.isNull()) {
+                            // JSON-encode the fragment so it survives SSE line-framing.
+                            return objectMapper.writeValueAsString(content.asText());
+                        }
+                    } catch (Exception e) {
+                        log.debug("Skipping non-JSON chunk: {}", chunk);
+                    }
+                    return null;
+                })
+                .doOnComplete(() -> log.info("ADMIN: AI formatting stream complete"))
+                .onErrorResume(e -> {
+                    log.error("ADMIN: AI formatting failed", e);
+                    try {
+                        return Flux.just(objectMapper.writeValueAsString(
+                                "<!--FORMAT_ERROR:" + e.getMessage() + "-->"));
+                    } catch (Exception ex) {
+                        return Flux.just("\"<!--FORMAT_ERROR-->\"");
+                    }
+                });
     }
 }
