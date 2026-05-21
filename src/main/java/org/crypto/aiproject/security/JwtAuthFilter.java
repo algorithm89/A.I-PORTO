@@ -10,8 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -26,6 +29,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
+
+    // Persist the context to a request attribute so it survives the ASYNC
+    // dispatch used by streaming endpoints. Without this, the security context
+    // is lost on the second filter-chain pass and authorization is denied
+    // mid-stream (the response is already committed, so it can't recover).
+    private final SecurityContextRepository securityContextRepository =
+            new RequestAttributeSecurityContextRepository();
 
     public JwtAuthFilter(JwtUtil jwtUtil, UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
@@ -57,7 +67,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(user, null, authorities);
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                SecurityContext context = SecurityContextHolder.createEmptyContext();
+                context.setAuthentication(authToken);
+                SecurityContextHolder.setContext(context);
+                securityContextRepository.saveContext(context, request, response);
                 log.debug("JWT auth OK | user={} role={} uri={}", username, user.getRole(), uri);
             } else {
                 log.warn("JWT auth FAIL | user={} not found in DB | uri={}", username, uri);

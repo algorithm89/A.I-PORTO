@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -35,6 +36,11 @@ public class SecurityConfig {
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // Load the security context from a request attribute on every
+                // dispatch (incl. the ASYNC dispatch of streaming endpoints),
+                // so JWT auth set on the first pass survives into the second.
+                .securityContext(sc -> sc.securityContextRepository(
+                        new RequestAttributeSecurityContextRepository()))
                 .authorizeHttpRequests(auth -> auth
                         // Public auth endpoints
                         .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/confirm").permitAll()
