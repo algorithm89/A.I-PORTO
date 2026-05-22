@@ -16,6 +16,7 @@ import TutorialPage     from './pages/TutorialPage'
 import CartoonBlogPage  from './pages/CartoonBlogPage'
 import NeonSpiritEpPage from './pages/NeonSpiritEp1Page'
 import AboutPage        from './pages/AboutPage'
+import LanguageGamePage from './pages/LanguageGamePage'
 import ProtectedRoute   from './components/ProtectedRoute'
 
 function HomePage() {
@@ -46,6 +47,7 @@ function App() {
         <Route path="/cartoons/neon-spirit/ep/:epNum/ch/:chNum" element={<ProtectedRoute><NeonSpiritEpPage /></ProtectedRoute>} />
         <Route path="/cartoons/neon-spirit/ep/:epNum"          element={<ProtectedRoute><NeonSpiritEpPage /></ProtectedRoute>} />
         <Route path="/about"                      element={<AboutPage />} />
+        <Route path="/game"                       element={<LanguageGamePage />} />
       </Routes>
       <Footer />
       <ChatBot />

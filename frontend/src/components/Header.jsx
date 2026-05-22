@@ -93,6 +93,7 @@ function Header() {
             <Link to="/blog"       className={nav('/blog')}        onClick={close}>Blog</Link>
             <Link to="/tutorials"  className={nav('/tutorials')}   onClick={close}>Tutorials</Link>
             <Link to="/cartoons"   className={nav('/cartoons')}    onClick={close}>Cartoons</Link>
+            <Link to="/game"       className={nav('/game')}        onClick={close}>Game</Link>
             <Link to="/about"      className={nav('/about')}       onClick={close}>About</Link>
 
             <div className="nav-auth">
