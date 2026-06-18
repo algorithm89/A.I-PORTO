@@ -31,8 +31,6 @@ Linear algebra has exactly four kinds of "thing." You already understand three o
 
 That's the entire alphabet. Everything else is just *operations* on these four. Let's meet them properly.
 
-**📷 Picture idea:** four little icons side by side — a single dot (scalar), a row of dots (vector), a grid (matrix), a stack of grids (tensor). Drop the file in as `cast.png` and reference it here.
-
 ## Vectors: a list of numbers with an attitude
 
 A **vector** is just an ordered list of numbers:
@@ -42,8 +40,6 @@ v = [3, 4]
 ```
 
 But here's the fun part — a vector is *also* an arrow. The vector `[3, 4]` means "walk 3 steps right, then 4 steps up." Every list of numbers is secretly a direction-and-distance.
-
-**📷 Picture idea:** a grid with an arrow starting at the origin going to the point (3, 4), labeled `v = [3, 4]`. This one image makes vectors "click" for most people. Save it as `vector-arrow.png`.
 
 ### You can do two things to a vector
 
@@ -132,8 +128,6 @@ print(A @ x)   # [17 18]
 
 See it? A matrix-times-vector is just *a bunch of dot products stacked up*. Everything keeps coming back to the dot product. That's not a coincidence — that's the whole subject.
 
-**📷 Picture idea:** a small diagram showing each row of the matrix lighting up as it "scans" across the vector to produce each output number. Save as `matvec.png`.
-
 ## Okay — so where does this actually live in machine learning?
 
 This is the part that makes people *want* to learn it. Every one of these shows up the first week you touch real ML.
@@ -166,8 +160,6 @@ vec("king") - vec("man") + vec("woman")  ≈  vec("queen")
 
 That's *vector addition and subtraction* — the exact thing you did with pizza orders three minutes ago — running on meaning itself. When ChatGPT "understands" that Paris is to France as Tokyo is to Japan, this is the machinery underneath.
 
-**📷 Picture idea:** the classic embedding diagram — arrows for king/queen/man/woman forming a little parallelogram. Save as `embeddings.png`. This is the image that makes people go "ohhh."
-
 ### 3. Recommendations are dot products
 
 Netflix represents *you* as a vector (how much you like action, comedy, romance…) and every *movie* as a vector (how much it *is* those things). To guess your rating? **Dot product.** High agreement → recommend it. That's the skeleton of a recommender system.
@@ -182,8 +174,6 @@ print(you @ movie)   # 40  -> strong match, recommend it
 ### 4. An image is already a matrix
 
 A grayscale photo is a grid of brightness numbers from 0 (black) to 255 (white) — a matrix. A color photo is a tensor (height × width × 3). Every filter, blur, and convolution in computer vision is matrix math you now have the vocabulary for.
-
-**📷 Picture idea:** a zoomed-in photo where you can see individual pixels with their numbers overlaid, next to the full image. Save as `image-matrix.png`.
 
 ## A 2-minute challenge before you go
 
@@ -215,17 +205,3 @@ You didn't learn "math." You learned the four words machine learning is written 
 ## Next up
 
 **Part 2 — Statistics: How a Model Knows It's Wrong.** Linear algebra is how a model *computes*; statistics is how it *learns* — averages, spread, probability, and the loss functions that tell a model "you're off, try again." Coming soon. ☕
-
----
-
-*Author note (delete before publishing) — image checklist for this part. Drop every PNG into `frontend/tuts/A-I-Math/`, then replace the matching `📷` callout above with `![alt text](filename.png)`:*
-
-- *✅ `BABYAI.png` — baby-Terminator hero (top of page) — placed*
-- *✅ `FUNAI.png` — ML explainer poster (start of the ML section) — placed*
-- *`cast.png` — scalar/vector/matrix/tensor icons*
-- *`vector-arrow.png` — arrow to (3,4) on a grid*
-- *`matvec.png` — matrix row scanning a vector*
-- *`embeddings.png` — king/queen parallelogram*
-- *`image-matrix.png` — zoomed pixels with numbers*
-
-*Where to get the fun ones legally: free + no attribution → [Unsplash](https://unsplash.com), [Pexels](https://pexels.com), [Pixabay](https://pixabay.com) (search "robot", "circuit", "data", "matrix code"). Or generate your own — that sidesteps licensing entirely. Avoid actual Terminator movie stills; they're copyrighted. A generic chrome robot reads the same and is safe to publish.*
