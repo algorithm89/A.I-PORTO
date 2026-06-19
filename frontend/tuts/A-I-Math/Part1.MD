@@ -31,6 +31,8 @@ Linear algebra has exactly four kinds of "thing." You already understand three o
 
 That's the entire alphabet. Everything else is just *operations* on these four. Let's meet them properly.
 
+![Scalar, vector, matrix, tensor — one number, a row of numbers, a grid, and a stack of grids.](cast.png)
+
 ## Vectors: a list of numbers with an attitude
 
 A **vector** is just an ordered list of numbers:
@@ -40,6 +42,8 @@ v = [3, 4]
 ```
 
 But here's the fun part — a vector is *also* an arrow. The vector `[3, 4]` means "walk 3 steps right, then 4 steps up." Every list of numbers is secretly a direction-and-distance.
+
+![The vector [3, 4]: walk 3 right and 4 up. Every list of numbers is secretly an arrow.](vector-arrow.png)
 
 ### You can do two things to a vector
 
