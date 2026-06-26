@@ -76,4 +76,22 @@ public class BillingController {
         Billing saved = billingService.create(request, user.getUsername());
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
+
+    /** DELETE /api/billing/{id} — remove a recorded payment. */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse> delete(@PathVariable Long id) {
+        User user = currentUser();
+        if (!canAccess(user)) {
+            log.warn("BILLING denied | user={} action=DELETE id={}", user == null ? "anon" : user.getUsername(), id);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new ApiResponse(false, "You do not have access to the billing page"));
+        }
+        try {
+            billingService.delete(id);
+            log.info("BILLING delete | id={} by={}", id, user.getUsername());
+            return ResponseEntity.ok(new ApiResponse(true, "Payment deleted"));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        }
+    }
 }

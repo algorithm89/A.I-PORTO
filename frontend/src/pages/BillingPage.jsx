@@ -12,8 +12,8 @@ const NOW = new Date()
 // Year dropdown: two years back through next year.
 const YEARS = [NOW.getFullYear() - 2, NOW.getFullYear() - 1, NOW.getFullYear(), NOW.getFullYear() + 1]
 
-const emptyForm = () => ({
-  payerEmail: '',
+const emptyForm = (email = '') => ({
+  payerEmail: email,
   amount: '',
   month: NOW.getMonth() + 1, // 1-12
   year: NOW.getFullYear(),
@@ -32,6 +32,26 @@ export default function BillingPage() {
   const [saving, setSaving]   = useState(false)
   const [error, setError]     = useState(null)
   const [success, setSuccess] = useState(null)
+  const [userEmail, setUserEmail] = useState('')
+
+  // Pre-fill the associated email with the logged-in user's own email.
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        if (!res.ok) return
+        const me = await res.json()
+        if (cancelled || !me?.email) return
+        setUserEmail(me.email)
+        // Only fill if the user hasn't already typed something.
+        setForm(f => (f.payerEmail ? f : { ...f, payerEmail: me.email }))
+      } catch { /* leave the field empty on failure */ }
+    })()
+    return () => { cancelled = true }
+  }, [token])
 
   const fetchRecords = useCallback(async () => {
     setLoading(true)
@@ -53,6 +73,22 @@ export default function BillingPage() {
 
   function update(field, value) {
     setForm(f => ({ ...f, [field]: value }))
+  }
+
+  async function deleteRecord(id) {
+    if (!window.confirm('Delete this payment? This cannot be undone.')) return
+    setError(null)
+    try {
+      const res = await fetch(`${API}/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (res.status === 403) { setAccess('denied'); return }
+      if (!res.ok) throw new Error(`Server returned ${res.status}`)
+      setRecords(r => r.filter(x => x.id !== id))
+    } catch (e) {
+      setError(e.message)
+    }
   }
 
   async function submit(e) {
@@ -77,7 +113,7 @@ export default function BillingPage() {
       if (res.status === 403) { setAccess('denied'); return }
       if (!res.ok) throw new Error(data.message || `Server returned ${res.status}`)
       setRecords(r => [data, ...r])
-      setForm(emptyForm())
+      setForm(emptyForm(userEmail))
       setSuccess(`Payment recorded. A confirmation email was sent to the admin and ${data.payerEmail}.`)
     } catch (e) {
       setError(e.message)
@@ -210,6 +246,7 @@ export default function BillingPage() {
                     <th>Amount</th>
                     <th>Method</th>
                     <th>Note</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -224,6 +261,14 @@ export default function BillingPage() {
                         </span>
                       </td>
                       <td>{r.note || '—'}</td>
+                      <td>
+                        <button
+                          type="button"
+                          className="billing-delete"
+                          onClick={() => deleteRecord(r.id)}
+                          title="Delete payment"
+                        >🗑</button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>

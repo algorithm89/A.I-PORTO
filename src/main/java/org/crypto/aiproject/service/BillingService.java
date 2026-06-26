@@ -50,6 +50,14 @@ public class BillingService {
         return billingRepository.findAllByOrderByPaymentDateDescIdDesc();
     }
 
+    public void delete(Long id) {
+        if (!billingRepository.existsById(id)) {
+            throw new IllegalStateException("Payment not found");
+        }
+        billingRepository.deleteById(id);
+        log.info("BILLING deleted | id={}", id);
+    }
+
     public Billing create(BillingRequest request, String createdBy) {
         Billing billing = new Billing(
                 request.getPayerEmail().trim(),
