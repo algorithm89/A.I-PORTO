@@ -57,6 +57,90 @@ public class EmailService {
         }
     }
 
+    /**
+     * Notify the recipients about a newly recorded payment.
+     * Sent to the page admin and the email the payment is associated with.
+     */
+    @Async
+    public void sendBillingNotification(List<String> recipients, String payerEmail, String amount,
+                                        String paymentDate, String method, String note, String enteredBy) {
+        try {
+            String htmlContent = buildBillingEmail(payerEmail, amount, paymentDate, method, note, enteredBy);
+
+            List<Map<String, Object>> to = recipients.stream()
+                    .distinct()
+                    .map(addr -> Map.<String, Object>of("email", addr))
+                    .toList();
+
+            Map<String, Object> body = Map.of(
+                    "from", Map.of("email", fromEmail, "name", fromName),
+                    "to", to,
+                    "subject", "New payment recorded - BublikStudios Billing",
+                    "html", htmlContent,
+                    "category", "Billing"
+            );
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setBearerAuth(mailtrapToken);
+
+            HttpEntity<String> request = new HttpEntity<>(objectMapper.writeValueAsString(body), headers);
+            ResponseEntity<String> response = restTemplate.exchange(MAILTRAP_SEND_URL, HttpMethod.POST, request, String.class);
+
+            log.info("Billing email sent to {} — status: {}", recipients, response.getStatusCode());
+        } catch (Exception e) {
+            // Don't let an email failure lose the recorded payment — it's already saved.
+            log.error("Failed to send billing email to {}", recipients, e);
+        }
+    }
+
+    private String buildBillingEmail(String payerEmail, String amount, String paymentDate,
+                                     String method, String note, String enteredBy) {
+        String methodLabel = "ETRANSFER".equalsIgnoreCase(method) ? "E-transfer" : "Cash";
+        String noteRow = (note == null || note.isBlank())
+                ? ""
+                : "<tr><td style=\"padding:8px 0;color:#888;\">Note</td><td style=\"padding:8px 0;text-align:right;font-weight:bold;\">%s</td></tr>".formatted(note);
+        return """
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <style>
+                        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
+                        .container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+                        .header { background-color: #1a1a2e; color: #ffffff; padding: 30px; text-align: center; }
+                        .header h1 { margin: 0; font-size: 22px; }
+                        .body-content { padding: 30px; color: #333333; }
+                        table { width: 100%%; border-collapse: collapse; }
+                        td { border-bottom: 1px solid #eee; font-size: 15px; }
+                        .footer { text-align: center; padding: 20px; font-size: 12px; color: #999999; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h1>Payment Recorded</h1>
+                        </div>
+                        <div class="body-content">
+                            <p>A new payment has been recorded in the billing page:</p>
+                            <table>
+                                <tr><td style="padding:8px 0;color:#888;">Associated email</td><td style="padding:8px 0;text-align:right;font-weight:bold;">%s</td></tr>
+                                <tr><td style="padding:8px 0;color:#888;">Amount</td><td style="padding:8px 0;text-align:right;font-weight:bold;">$%s</td></tr>
+                                <tr><td style="padding:8px 0;color:#888;">Date</td><td style="padding:8px 0;text-align:right;font-weight:bold;">%s</td></tr>
+                                <tr><td style="padding:8px 0;color:#888;">Method</td><td style="padding:8px 0;text-align:right;font-weight:bold;">%s</td></tr>
+                                %s
+                                <tr><td style="padding:8px 0;color:#888;">Entered by</td><td style="padding:8px 0;text-align:right;font-weight:bold;">%s</td></tr>
+                            </table>
+                        </div>
+                        <div class="footer">
+                            <p>&copy; 2026 BublikStudios. All rights reserved.</p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+                """.formatted(payerEmail, amount, paymentDate, methodLabel, noteRow, enteredBy);
+    }
+
     private String buildEmail(String name, String link) {
         return """
                 <!DOCTYPE html>
