@@ -65,6 +65,7 @@ public class BillingService {
                 request.getPaymentDate(),
                 request.getMethod().toUpperCase(),
                 request.getNote(),
+                request.getSignature().trim(),
                 createdBy
         );
         Billing saved = billingRepository.save(billing);
@@ -85,6 +86,7 @@ public class BillingService {
                 saved.getPaymentDate().toString(),
                 saved.getMethod(),
                 saved.getNote(),
+                saved.getSignature(),
                 createdBy
         );
 

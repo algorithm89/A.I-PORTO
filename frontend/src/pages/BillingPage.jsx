@@ -19,6 +19,7 @@ const emptyForm = (email = '') => ({
   year: NOW.getFullYear(),
   method: 'ETRANSFER',
   note: '',
+  signature: '',
 })
 
 export default function BillingPage() {
@@ -107,6 +108,7 @@ export default function BillingPage() {
           paymentDate: `${form.year}-${String(form.month).padStart(2, '0')}-01`,
           method: form.method,
           note: form.note.trim() || null,
+          signature: form.signature.trim(),
         }),
       })
       const data = await res.json().catch(() => ({}))
@@ -222,6 +224,22 @@ export default function BillingPage() {
             />
           </label>
 
+          <label className="billing-sign-label">
+            Type your name to sign
+            <input
+              type="text"
+              required
+              maxLength={120}
+              placeholder="Your full name"
+              className="billing-sign-input"
+              value={form.signature}
+              onChange={e => update('signature', e.target.value)}
+            />
+            <span className="billing-sign-hint">
+              By typing your name you confirm this payment is accurate.
+            </span>
+          </label>
+
           {error   && <p className="billing-error">{error}</p>}
           {success && <p className="billing-success">{success}</p>}
 
@@ -246,6 +264,7 @@ export default function BillingPage() {
                     <th>Amount</th>
                     <th>Method</th>
                     <th>Note</th>
+                    <th>Signed</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -261,6 +280,7 @@ export default function BillingPage() {
                         </span>
                       </td>
                       <td>{r.note || '—'}</td>
+                      <td className="billing-sig" title={r.createdBy ? `entered by ${r.createdBy}` : ''}>{r.signature || '—'}</td>
                       <td>
                         <button
                           type="button"

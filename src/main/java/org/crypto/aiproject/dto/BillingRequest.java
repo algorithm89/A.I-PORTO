@@ -25,6 +25,10 @@ public class BillingRequest {
     @Size(max = 1000, message = "Note is too long")
     private String note;
 
+    @NotBlank(message = "Signature is required")
+    @Size(max = 120, message = "Signature is too long")
+    private String signature;
+
     public String getPayerEmail() { return payerEmail; }
     public void setPayerEmail(String payerEmail) { this.payerEmail = payerEmail; }
 
@@ -39,4 +43,7 @@ public class BillingRequest {
 
     public String getNote() { return note; }
     public void setNote(String note) { this.note = note; }
+
+    public String getSignature() { return signature; }
+    public void setSignature(String signature) { this.signature = signature; }
 }

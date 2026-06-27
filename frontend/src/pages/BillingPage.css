@@ -185,6 +185,30 @@
   color: #60a5fa;
 }
 
+.billing-sign-label {
+  margin-top: 4px;
+}
+
+.billing-sign-input {
+  font-family: 'Brush Script MT', 'Segoe Script', cursive;
+  font-size: 1.25rem !important;
+  letter-spacing: 0.02em;
+}
+
+.billing-sign-hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.75rem;
+  color: #7a7a95;
+}
+
+.billing-sig {
+  font-family: 'Brush Script MT', 'Segoe Script', cursive;
+  font-size: 1.05rem;
+  color: #eaeaf2;
+  white-space: nowrap;
+}
+
 .billing-delete {
   background: transparent;
   border: 1px solid #3a3a55;

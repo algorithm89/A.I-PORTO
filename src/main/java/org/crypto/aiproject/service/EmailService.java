@@ -63,9 +63,9 @@ public class EmailService {
      */
     @Async
     public void sendBillingNotification(List<String> recipients, String payerEmail, String amount,
-                                        String paymentDate, String method, String note, String enteredBy) {
+                                        String paymentDate, String method, String note, String signature, String enteredBy) {
         try {
-            String htmlContent = buildBillingEmail(payerEmail, amount, paymentDate, method, note, enteredBy);
+            String htmlContent = buildBillingEmail(payerEmail, amount, paymentDate, method, note, signature, enteredBy);
 
             List<Map<String, Object>> to = recipients.stream()
                     .distinct()
@@ -95,7 +95,7 @@ public class EmailService {
     }
 
     private String buildBillingEmail(String payerEmail, String amount, String paymentDate,
-                                     String method, String note, String enteredBy) {
+                                     String method, String note, String signature, String enteredBy) {
         String methodLabel = "ETRANSFER".equalsIgnoreCase(method) ? "E-transfer" : "Cash";
         String noteRow = (note == null || note.isBlank())
                 ? ""
@@ -129,6 +129,7 @@ public class EmailService {
                                 <tr><td style="padding:8px 0;color:#888;">Date</td><td style="padding:8px 0;text-align:right;font-weight:bold;">%s</td></tr>
                                 <tr><td style="padding:8px 0;color:#888;">Method</td><td style="padding:8px 0;text-align:right;font-weight:bold;">%s</td></tr>
                                 %s
+                                <tr><td style="padding:8px 0;color:#888;">Signed by</td><td style="padding:8px 0;text-align:right;font-weight:bold;font-style:italic;">%s</td></tr>
                                 <tr><td style="padding:8px 0;color:#888;">Entered by</td><td style="padding:8px 0;text-align:right;font-weight:bold;">%s</td></tr>
                             </table>
                         </div>
@@ -138,7 +139,7 @@ public class EmailService {
                     </div>
                 </body>
                 </html>
-                """.formatted(payerEmail, amount, paymentDate, methodLabel, noteRow, enteredBy);
+                """.formatted(payerEmail, amount, paymentDate, methodLabel, noteRow, signature, enteredBy);
     }
 
     private String buildEmail(String name, String link) {

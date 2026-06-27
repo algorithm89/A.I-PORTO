@@ -31,6 +31,12 @@ public class Billing {
     @Column(length = 1000)
     private String note;
 
+    /** Typed electronic signature (the signer's name). Required for new entries
+     *  via the request DTO; left nullable in the schema so adding the column to a
+     *  table that already has rows doesn't break the migration. */
+    @Column
+    private String signature;
+
     /** Username of whoever entered the record. */
     @Column(nullable = false)
     private String createdBy;
@@ -41,12 +47,13 @@ public class Billing {
     public Billing() {}
 
     public Billing(String payerEmail, BigDecimal amount, LocalDate paymentDate,
-                   String method, String note, String createdBy) {
+                   String method, String note, String signature, String createdBy) {
         this.payerEmail = payerEmail;
         this.amount = amount;
         this.paymentDate = paymentDate;
         this.method = method;
         this.note = note;
+        this.signature = signature;
         this.createdBy = createdBy;
     }
 
@@ -67,6 +74,9 @@ public class Billing {
 
     public String getNote() { return note; }
     public void setNote(String note) { this.note = note; }
+
+    public String getSignature() { return signature; }
+    public void setSignature(String signature) { this.signature = signature; }
 
     public String getCreatedBy() { return createdBy; }
     public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
