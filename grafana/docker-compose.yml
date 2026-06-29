@@ -48,7 +48,7 @@ services:
     image: gcr.io/cadvisor/cadvisor:v0.52.1
     container_name: ai-cadvisor
     network_mode: host
-    cgroupns_mode: host          # cgroup v2: let cAdvisor see all host cgroups, not just its own
+    cgroup: host                 # cgroup v2: let cAdvisor see all host cgroups, not just its own
     devices:
       - /dev/kmsg                # required by cAdvisor on cgroup v2
     command:
