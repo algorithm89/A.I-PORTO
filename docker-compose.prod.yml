@@ -38,6 +38,9 @@ services:
     network_mode: host
     environment:
       SPRING_PROFILES_ACTIVE: prod
+      # Force local Vault at config-import time (overrides the base public-IP URI
+      # before the prod profile is applied — env vars win during ConfigData import)
+      SPRING_CLOUD_VAULT_URI: http://127.0.0.1:8200
       VAULT_TOKEN: ${VAULT_TOKEN}
     volumes:
       - uploads:/app/uploads
