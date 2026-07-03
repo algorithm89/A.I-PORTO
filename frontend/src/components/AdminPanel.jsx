@@ -119,9 +119,40 @@ function AdminPanel({ onClose }) {
         method: 'POST', headers: authHeaders,
         body: JSON.stringify({ rawText: epForm.rawText }),
       })
-      const data = await res.json()
-      if (!data.success) throw new Error(data.message)
-      setEpForm(prev => ({ ...prev, content: data.message }))
+      if (!res.ok) throw new Error(`Formatting failed (HTTP ${res.status}).`)
+
+      // The endpoint streams the formatted HTML as Server-Sent Events — each
+      // event's data is a JSON-encoded fragment. Streaming keeps the proxy
+      // connection alive, so long stories no longer hit a gateway timeout.
+      const reader = res.body.getReader()
+      const decoder = new TextDecoder()
+      let buffer = ''
+      let html = ''
+      const consumeLine = (line) => {
+        const payload = (line.startsWith('data:') ? line.slice(5) : line).trim()
+        if (!payload) return
+        try { html += JSON.parse(payload) } catch { /* skip keep-alive lines */ }
+      }
+      for (;;) {
+        const { done, value } = await reader.read()
+        if (done) break
+        buffer += decoder.decode(value, { stream: true })
+        let nl
+        while ((nl = buffer.indexOf('\n')) !== -1) {
+          consumeLine(buffer.slice(0, nl))
+          buffer = buffer.slice(nl + 1)
+        }
+      }
+      if (buffer) consumeLine(buffer)
+
+      // Strip any accidental markdown code fences.
+      html = html.replace(/^```html?\s*/i, '').replace(/\s*```$/i, '').trim()
+
+      const errMatch = html.match(/<!--FORMAT_ERROR:(.*?)-->/)
+      if (errMatch) throw new Error(`AI formatting failed: ${errMatch[1] || 'unknown error'}`)
+      if (!html) throw new Error('The formatter returned an empty result — please try again.')
+
+      setEpForm(prev => ({ ...prev, content: html }))
       setPreview(true)
     } catch (e) { setError(e.message) }
     finally { setFormatting(false) }

@@ -6,6 +6,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -48,10 +49,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/chat").permitAll()
                         // Actuator — Prometheus scrapes this from localhost only
                         .requestMatchers("/actuator/health", "/actuator/info", "/actuator/prometheus").permitAll()
-                        // Episode summaries — public listing (metadata only, no story content)
-                        .requestMatchers("/api/episodes/summaries").permitAll()
-                        // Episodes & chapters — registered, logged-in users only
-                        .requestMatchers("/api/episodes/**").authenticated()
+                        // Episodes & chapters — public read (listings + story content).
+                        // All mutations live under /api/admin/** and stay ADMIN-only.
+                        .requestMatchers(HttpMethod.GET, "/api/episodes/**").permitAll()
                         // Uploaded images — public read (upload itself is under /api/admin)
                         .requestMatchers("/api/uploads/**").permitAll()
                         // Admin endpoints — ADMIN role required
