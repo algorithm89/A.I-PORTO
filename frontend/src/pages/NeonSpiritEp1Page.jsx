@@ -116,9 +116,39 @@ export default function NeonSpiritEpPage() {
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ rawText: editForm.rawText }),
       })
-      const data = await res.json()
-      if (!data.success) throw new Error(data.message || 'AI formatting failed')
-      setEditForm(p => ({ ...p, content: data.message }))
+      if (!res.ok) throw new Error(`Formatting failed (HTTP ${res.status}).`)
+
+      // The endpoint streams the formatted HTML as Server-Sent Events — each
+      // event's data is a JSON-encoded fragment, so we read the stream rather
+      // than calling res.json() (which would choke on the leading "data:").
+      const reader = res.body.getReader()
+      const decoder = new TextDecoder()
+      let buffer = ''
+      let html = ''
+      const consumeLine = (line) => {
+        const payload = (line.startsWith('data:') ? line.slice(5) : line).trim()
+        if (!payload) return
+        try { html += JSON.parse(payload) } catch { /* skip keep-alive lines */ }
+      }
+      for (;;) {
+        const { done, value } = await reader.read()
+        if (done) break
+        buffer += decoder.decode(value, { stream: true })
+        let nl
+        while ((nl = buffer.indexOf('\n')) !== -1) {
+          consumeLine(buffer.slice(0, nl))
+          buffer = buffer.slice(nl + 1)
+        }
+      }
+      if (buffer) consumeLine(buffer)
+
+      html = html.replace(/^```html?\s*/i, '').replace(/\s*```$/i, '').trim()
+
+      const errMatch = html.match(/<!--FORMAT_ERROR:(.*?)-->/)
+      if (errMatch) throw new Error(`AI formatting failed: ${errMatch[1] || 'unknown error'}`)
+      if (!html) throw new Error('The formatter returned an empty result — please try again.')
+
+      setEditForm(p => ({ ...p, content: html }))
       setPreviewMode(true)
     } catch (e) {
       setEditError(e.message)
