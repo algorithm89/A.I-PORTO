@@ -44,8 +44,8 @@ function App() {
         <Route path="/tutorials/:slug/part/:partNum" element={<TutorialPage />} />
         <Route path="/tutorials/:slug"               element={<TutorialPage />} />
         <Route path="/cartoons"                   element={<CartoonBlogPage />} />
-        <Route path="/cartoons/neon-spirit/ep/:epNum/ch/:chNum" element={<ProtectedRoute><NeonSpiritEpPage /></ProtectedRoute>} />
-        <Route path="/cartoons/neon-spirit/ep/:epNum"          element={<ProtectedRoute><NeonSpiritEpPage /></ProtectedRoute>} />
+        <Route path="/cartoons/neon-spirit/ep/:epNum/ch/:chNum" element={<NeonSpiritEpPage />} />
+        <Route path="/cartoons/neon-spirit/ep/:epNum"          element={<NeonSpiritEpPage />} />
         <Route path="/about"                      element={<AboutPage />} />
         <Route path="/billing"                    element={<ProtectedRoute><BillingPage /></ProtectedRoute>} />
       </Routes>
