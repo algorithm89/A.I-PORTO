@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import HexTronGrid from '../components/HexTronGrid'
-import { requireAuth } from '../lib/auth'
 import './CartoonBlogPage.css'
 
 import pic10 from '../assets/PIC10.webp'
@@ -102,13 +101,9 @@ export default function CartoonBlogPage() {
                     <h2 className="cc-title">{ep.title}</h2>
                     {ep.subtitle && <p className="cc-excerpt">{ep.subtitle}</p>}
 
-                    <a
-                      href={to}
-                      className="cc-read-btn"
-                      onClick={e => { e.preventDefault(); if (requireAuth()) window.location.href = to }}
-                    >
+                    <Link to={to} className="cc-read-btn">
                       Read episode →
-                    </a>
+                    </Link>
                   </div>
                 </article>
               )
