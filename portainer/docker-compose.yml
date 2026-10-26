@@ -8,7 +8,12 @@ services:
   portainer:
     image: portainer/portainer-ce:latest
     container_name: ai-portainer
-    network_mode: host
+    # Publish Portainer's HTTPS UI on 9443. (Bridge networking, not host —
+    # host mode hides the PORTS column and makes binding harder to see.)
+    # 0.0.0.0 = reachable from the internet; lock 9443 to your own IP in the
+    # netcup firewall. For local-only access instead, use "127.0.0.1:9443:9443".
+    ports:
+      - "9443:9443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
