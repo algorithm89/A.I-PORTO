@@ -1,14 +1,14 @@
 ---
-title: Math for AI — The Foundations
-track: Math for AI
+title: Math for ML — The Foundations
+track: Math for ML
 level: Beginner
-excerpt: The two pieces of math that actually run modern AI — linear algebra and statistics — explained like a friend would over coffee, with NumPy you can run today. No gatekeeping, no detour through pure math.
+excerpt: The two pieces of math that actually run modern ML — linear algebra and statistics — explained like a friend would over coffee, with NumPy you can run today. No gatekeeping, no detour through pure math.
 cover: AICOVER.png
 partTitle: Part 1 — Linear Algebra, The Language Your Model Speaks
 order: 1
 ---
 
-# Math for AI — Part 1: Linear Algebra, The Language Your Model Speaks
+# Math for ML — Part 1: Linear Algebra, The Language Your Model Speaks
 
 Here's a secret the textbooks bury under 200 pages of proofs: **a neural network is basically a stack of multiplications and additions wearing a fancy coat.** That's it. The "math" everyone's scared of is mostly *linear algebra* — and linear algebra is just a tidy way of doing a lot of multiplying and adding at once, without losing your mind.
 

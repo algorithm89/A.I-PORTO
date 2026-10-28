@@ -1,18 +1,18 @@
 ---
-title: Math for AI — The Foundations
-track: Math for AI
+title: Math for ML — The Foundations
+track: Math for ML
 level: Beginner
-excerpt: The two pieces of math that actually run modern AI — linear algebra and statistics — explained like a friend would over coffee, with NumPy you can run today.
+excerpt: The two pieces of math that actually run modern ML — linear algebra and statistics — explained like a friend would over coffee, with NumPy you can run today.
 cover: AICOVER.png
 partTitle: Part 2 — Statistics (Coming Soon)
 order: 2
 ---
 
-# Math for AI — Part 2: Statistics, How a Model Knows It's Wrong
+# Math for ML — Part 2: Statistics, How a Model Knows It's Wrong
 
 **🚧 This part is being written.** Part 1 (Linear Algebra) is live — this is the next stop on the track.
 
-![Math for AI cover](AICOVER.png)
+![Math for ML cover](AICOVER.png)
 
 ## Where we're headed
 

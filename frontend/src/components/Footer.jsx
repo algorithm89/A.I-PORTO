@@ -13,7 +13,7 @@ function Footer() {
               <span className="footer-logo-name">Bublik<span>Studios</span></span>
             </div>
             <p className="footer-tagline">
-              AI · MLOps · Inner Compass.<br />
+              ML · MLOps · Inner Compass.<br />
               A blog where technology meets self-discovery.
             </p>
             <div className="footer-socials">
@@ -36,9 +36,9 @@ function Footer() {
           <div className="footer-col">
             <h4 className="fcol-head">Learn</h4>
             <ul className="fcol-links">
-              <li><a href="#blog">🤖 MLOps / AI Tutorials</a></li>
-              <li><a href="#blog">AI Roadmap</a></li>
-              <li><a href="#blog">Local AI with Ollama</a></li>
+              <li><a href="#blog">🤖 MLOps / ML Tutorials</a></li>
+              <li><a href="#blog">ML Roadmap</a></li>
+              <li><a href="#blog">Local ML with Ollama</a></li>
               <li><a href="#blog">Math for ML</a></li>
             </ul>
           </div>

@@ -19,8 +19,8 @@ const CATEGORIES = [
   {
     id: 2,
     color: 'cyan',
-    title: 'MLOps / A.I Tutorials',
-    desc: 'Hands-on guides covering Machine Learning, MLOps pipelines, local AI with Ollama, neural networks and everything in between.',
+    title: 'MLOps / ML Tutorials',
+    desc: 'Hands-on guides covering Machine Learning, MLOps pipelines, local ML with Ollama, neural networks and everything in between.',
     label: 'Start learning',
     to: '/tutorials',
     img: picTutorials,

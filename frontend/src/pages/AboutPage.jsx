@@ -34,7 +34,7 @@ export default function AboutPage() {
           <h2 className="about-story-title">The Story Behind <span className="gradient-text">BublikStudios</span></h2>
           <div className="about-story-body">
             <p>
-              BublikStudios started as a simple idea — what if there was a place where AI tutorials,
+              BublikStudios started as a simple idea — what if there was a place where ML tutorials,
               cartoon obsessions, and personal growth could live side by side? A bit unusual? Yes.
               But that's kind of the point.
             </p>
@@ -62,7 +62,7 @@ export default function AboutPage() {
         <div className="about-skills-grid">
           <div className="about-skill-card ask-cyan">
             <span className="ask-icon">🤖</span>
-            <h3>AI & Machine Learning</h3>
+            <h3>Machine Learning & MLOps</h3>
             <p>Building ML pipelines, training models, deploying with MLOps. From linear algebra to production.</p>
           </div>
           <div className="about-skill-card ask-pink">

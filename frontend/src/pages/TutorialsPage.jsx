@@ -7,7 +7,7 @@ import './TutorialsPage.css'
 const LEVELS = ['All Levels', 'Beginner', 'Intermediate', 'Advanced']
 
 const TRACK_COLOR = {
-  'Math for AI': 'cyan',
+  'Math for ML': 'cyan',
   'Titanic Project': 'pink',
   'Biometric System': 'purple',
   'Accountability Bot': 'yellow',
@@ -19,13 +19,13 @@ const TRACK_COLOR = {
 const DOMAINS = {
   ai: {
     key: 'ai',
-    label: 'A.I.',
+    label: 'ML',
     icon: '🤖',
     color: 'cyan',
     status: 'live',
     headline: 'Teach machines to see, predict & decide.',
     blurb: 'Start at the math, end with real systems — face recognition, survival predictions, an accountability bot.',
-    tracks: ['Math for AI', 'Titanic Project', 'Biometric System', 'Accountability Bot'],
+    tracks: ['Math for ML', 'Titanic Project', 'Biometric System', 'Accountability Bot'],
   },
   devops: {
     key: 'devops',
@@ -82,7 +82,7 @@ export default function TutorialsPage() {
       {/* ── Hero ── */}
       <section className="tut-hero">
         <div className="container">
-          <span className="sec-tag sec-tag-cyan reveal">🤖 DevOps &amp; A.I. Tutorials</span>
+          <span className="sec-tag sec-tag-cyan reveal">🤖 DevOps &amp; ML Tutorials</span>
           <h1 className="tut-hero-title reveal" style={{ animationDelay: '0.08s' }}>
             Every engineer has<br />
             <span className="gradient-text gradient-shimmer">two journeys</span>
@@ -133,7 +133,7 @@ export default function TutorialsPage() {
           <span className="tut-filter-label">Journey</span>
           <div className="tut-filter-row">
             <button className={`filter-btn ${domain === 'all' ? 'filter-active' : ''}`} onClick={() => { setDomain('all'); setTrack('All') }}>All</button>
-            <button className={`filter-btn ${domain === 'ai' ? 'filter-active' : ''}`} onClick={() => { setDomain('ai'); setTrack('All') }}>🤖 A.I.</button>
+            <button className={`filter-btn ${domain === 'ai' ? 'filter-active' : ''}`} onClick={() => { setDomain('ai'); setTrack('All') }}>🤖 ML</button>
             <button className={`filter-btn fb-green ${domain === 'devops' ? 'filter-active fb-green-active' : ''}`} onClick={() => { setDomain('devops'); setTrack('All') }}>🛠️ DevOps</button>
           </div>
         </div>
@@ -163,7 +163,7 @@ export default function TutorialsPage() {
               <span className="tut-soon-emoji">🛠️</span>
               <div>
                 <h3 className="tut-soon-title">The DevOps journey is being written</h3>
-                <p className="tut-soon-sub">Same story-driven style as the A.I. track — every concept paired with something you can actually run. Here’s the planned arc:</p>
+                <p className="tut-soon-sub">Same story-driven style as the ML track — every concept paired with something you can actually run. Here’s the planned arc:</p>
               </div>
             </div>
             <div className="tut-grid">

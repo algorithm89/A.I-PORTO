@@ -40,6 +40,26 @@ export default function CartoonBlogPage() {
     load()
   }, [])
 
+  // Static teaser card for an upcoming series (shows even before any episode exists in the DB).
+  const teaserCard = (
+    <article className="cartoon-card">
+      <div className="cc-img-wrap">
+        <img src={pic10} alt="CyberPunk Calamity Jane" className="cc-img" loading="lazy" />
+        <div className="cc-img-overlay"><span className="cc-emoji">🤠</span></div>
+      </div>
+      <div className="cc-body">
+        <div className="cc-meta">
+          <span className="cc-series">CyberPunk Calamity Jane</span>
+          <span className="cc-dot">·</span>
+          <span className="cc-date">Coming soon</span>
+        </div>
+        <h2 className="cc-title">CyberPunk Calamity Jane</h2>
+        <p className="cc-excerpt">A neon-soaked frontier outlaw story — the next original series from BublikStudios. First episode landing soon.</p>
+        <Link to="/cartoons/cyberpunk-calamity-jane/ep/1/ch/1" className="cc-read-btn">Preview →</Link>
+      </div>
+    </article>
+  )
+
   return (
     <div className="cartoon-page">
       <HexTronGrid cellSize={44} color="255,230,0" radius={2.8} />
@@ -73,13 +93,12 @@ export default function CartoonBlogPage() {
             <p>{error}</p>
           </div>
         ) : episodes.length === 0 ? (
-          <div className="cartoon-empty">
-            <span className="cartoon-empty-icon">📝</span>
-            <h2>No episodes yet</h2>
-            <p>New cartoon blog episodes are coming soon — stay tuned!</p>
+          <div className="cartoon-grid">
+            {teaserCard}
           </div>
         ) : (
           <div className="cartoon-grid">
+            {teaserCard}
             {episodes.map(ep => {
               const to = `/cartoons/${seriesSlug(ep.series)}/ep/${ep.episodeNumber}/ch/1`
               const date = formatDate(ep.createdAt)

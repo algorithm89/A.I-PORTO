@@ -5,7 +5,13 @@ import pic10 from '../assets/PIC10.webp'
 import './NeonSpiritEp1Page.css'
 
 const API = import.meta.env.VITE_API_URL || ''
-const SERIES = 'Neon Spirit'
+
+// Map a URL slug -> the exact series name stored in the DB.
+// Add a line here whenever you launch a new series.
+const SERIES_BY_SLUG = {
+  'neon-spirit': 'Neon Spirit',
+  'cyberpunk-calamity-jane': 'CyberPunk Calamity Jane',
+}
 
 const ROMAN = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X']
 
@@ -23,7 +29,8 @@ function getIsAdmin() {
 }
 
 export default function NeonSpiritEpPage() {
-  const { epNum, chNum } = useParams()
+  const { series: seriesSlug = 'neon-spirit', epNum, chNum } = useParams()
+  const SERIES = SERIES_BY_SLUG[seriesSlug] || 'Neon Spirit'
   const navigate = useNavigate()
   const ep = parseInt(epNum, 10) || 1
   const ch = parseInt(chNum, 10) || 1
@@ -102,7 +109,7 @@ export default function NeonSpiritEpPage() {
   }
 
   function addChapter() {
-    navigate(`/cartoons/neon-spirit/ep/${ep}/ch/${totalChapters + 1}`)
+    navigate(`/cartoons/${seriesSlug}/ep/${ep}/ch/${totalChapters + 1}`)
   }
 
   async function handleAIFormat() {
@@ -232,12 +239,12 @@ export default function NeonSpiritEpPage() {
 
       {/* ── Cover image ── */}
       <div className="ns-cover container">
-        <img src={pic10} alt="Neon Spirit" className="ns-cover-img" />
+        <img src={pic10} alt={SERIES} className="ns-cover-img" />
       </div>
 
       {/* ── Episode header ── */}
       <header className="ns-header container">
-        <span className="sec-tag sec-tag-yellow">🎨 Neon Spirit</span>
+        <span className="sec-tag sec-tag-yellow">🎨 {SERIES}</span>
         <h1 className="ns-title">
           Episode {roman}:<br />
           <span className="gradient-text-yellow">{subtitle}</span>
@@ -251,7 +258,7 @@ export default function NeonSpiritEpPage() {
           {totalChapters > 0 && <><span className="ns-dot">·</span><span>📖 {totalChapters} Chapter{totalChapters > 1 ? 's' : ''}</span></>}
         </div>
         <div className="ns-tags">
-          <span className="ns-tag">#neon-spirit</span>
+          <span className="ns-tag">#{seriesSlug}</span>
           <span className="ns-tag">#original</span>
           <span className="ns-tag">#episode-{ep}</span>
         </div>
@@ -282,7 +289,7 @@ export default function NeonSpiritEpPage() {
           {chapters.map(c => (
             <Link
               key={c.chapterNumber}
-              to={`/cartoons/neon-spirit/ep/${ep}/ch/${c.chapterNumber}`}
+              to={`/cartoons/${seriesSlug}/ep/${ep}/ch/${c.chapterNumber}`}
               className={`ns-chapter-tab ${c.chapterNumber === currentCh ? 'ns-chapter-tab-active' : ''}`}
             >
               {c.title || `Chapter ${c.chapterNumber}`}
@@ -425,15 +432,15 @@ export default function NeonSpiritEpPage() {
         <div className="ns-footer-nav container">
           <div>
             {hasPrev && (
-              <Link to={`/cartoons/neon-spirit/ep/${ep}/ch/${currentCh - 1}`} className="ns-back-link">
+              <Link to={`/cartoons/${seriesSlug}/ep/${ep}/ch/${currentCh - 1}`} className="ns-back-link">
                 ← Previous Chapter
               </Link>
             )}
           </div>
-          <Link to={`/cartoons/neon-spirit/ep/${ep}/ch/1`} className="ns-back-link">All Chapters</Link>
+          <Link to={`/cartoons/${seriesSlug}/ep/${ep}/ch/1`} className="ns-back-link">All Chapters</Link>
           <div>
             {hasNext && (
-              <Link to={`/cartoons/neon-spirit/ep/${ep}/ch/${currentCh + 1}`} className="ns-back-link">
+              <Link to={`/cartoons/${seriesSlug}/ep/${ep}/ch/${currentCh + 1}`} className="ns-back-link">
                 Next Chapter →
               </Link>
             )}
@@ -445,12 +452,12 @@ export default function NeonSpiritEpPage() {
       {!editMode && (
         <div className="ns-footer-nav container ns-episode-nav">
           {ep > 1 && (
-            <Link to={`/cartoons/neon-spirit/ep/${ep - 1}/ch/1`} className="ns-back-link">
+            <Link to={`/cartoons/${seriesSlug}/ep/${ep - 1}/ch/1`} className="ns-back-link">
               ← Episode {ROMAN[ep - 1]}
             </Link>
           )}
           <Link to="/cartoons" className="ns-back-link">All Stories</Link>
-          <Link to={`/cartoons/neon-spirit/ep/${ep + 1}/ch/1`} className="ns-back-link">
+          <Link to={`/cartoons/${seriesSlug}/ep/${ep + 1}/ch/1`} className="ns-back-link">
             Episode {ROMAN[ep + 1] || ep + 1} →
           </Link>
         </div>

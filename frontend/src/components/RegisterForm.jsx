@@ -48,7 +48,7 @@ function RegisterForm({ onClose, onSwitchToLogin }) {
         <div className="reg-header">
           <span className="sec-tag sec-tag-cyan">✦ Join the Studio</span>
           <h2 className="reg-title">Create your <span className="gradient-text">account</span></h2>
-          <p className="reg-sub">Get access to stories, AI tutorials and more. Free forever.</p>
+          <p className="reg-sub">Get access to stories, ML tutorials and more. Free forever.</p>
         </div>
 
         <form className="reg-form" onSubmit={handleSubmit} noValidate>

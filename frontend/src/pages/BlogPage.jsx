@@ -21,7 +21,7 @@ const POSTS = [
     color: 'purple',
     emoji: '🧭',
     title: 'The Discipline Trap — Why Motivation is Not the Enemy',
-    excerpt: 'We obsess over motivation but ignore the quiet systems that carry us forward. This is what I learned from building habits while learning AI and animation at the same time.',
+    excerpt: 'We obsess over motivation but ignore the quiet systems that carry us forward. This is what I learned from building habits while learning ML and animation at the same time.',
     date: 'March 15, 2026',
     readTime: '7 min read',
     tags: ['discipline', 'habits', 'mindset'],
@@ -35,7 +35,7 @@ const POSTS = [
     excerpt: 'Machine learning humbled me. I thought I understood maths. I thought I understood code. Turns out the best thing you can do is get comfortable being a beginner again.',
     date: 'March 8, 2026',
     readTime: '4 min read',
-    tags: ['learning', 'mindset', 'AI'],
+    tags: ['learning', 'mindset', 'ML'],
   },
 ]
 

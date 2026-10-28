@@ -24,8 +24,8 @@ function AISection() {
         <TriGrid3D size={52} color="0,220,255" radius={3.2} />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div className="sec-header">
-            <span className="sec-tag sec-tag-cyan">🤖 Learn AI</span>
-            <h2 className="sec-title">AI is <span className="gradient-text">not scary.</span></h2>
+            <span className="sec-tag sec-tag-cyan">🤖 Learn ML</span>
+            <h2 className="sec-title">ML is <span className="gradient-text">not scary.</span></h2>
             <p className="sec-sub">A real, honest roadmap — no gatekeeping. Just the steps that actually work.</p>
           </div>
           <div className="learn-grid" style={{marginBottom:'2rem'}}>

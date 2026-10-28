@@ -10,7 +10,7 @@ import pic10 from '../assets/PIC10.webp'
 
 function StoriesSection() {
   const cards = [
-    { id:1, tag:'AI & MLOps',  color:'cyan',   icon:'🤖', title:'MLOps / A.I Tutorials',  desc:'Deep dives into machine learning pipelines, models, and real-world AI you can actually use.', img:pic8,  imgPos:'center 15%', to:'/tutorials' },
+    { id:1, tag:'ML & MLOps',  color:'cyan',   icon:'🤖', title:'MLOps / ML Tutorials',  desc:'Deep dives into machine learning pipelines, models, and real-world ML you can actually use.', img:pic8,  imgPos:'center 15%', to:'/tutorials' },
     { id:2, tag:'About Me',    color:'pink',   icon:'✨', title:'About Me',                desc:'The story behind BublikStudios — math, cartoons, code and a love for learning.', img:pic4,  imgPos:'center 10%', to:'/about' },
     { id:3, tag:'Inner Compass',color:'purple', icon:'🧭', title:'Inner Compass Blog',     desc:'Personal reflections on growth, creativity and navigating life with curiosity.', img:pic7,  imgPos:'center 10%', to:'/blog' },
     { id:4, tag:'Cartoon Blog', color:'yellow', icon:'🎨', title:'Cartoon Blog', desc:'Hand-drawn stories and illustrated posts — where imagination runs the show.', img:pic10, imgPos:'center 70%', to:'/cartoons' },
@@ -23,7 +23,7 @@ function StoriesSection() {
         <div className="sec-header">
           <span className="sec-tag sec-tag-pink">✦ Explore</span>
           <h2 className="sec-title">What's <span className="gradient-text">Inside</span></h2>
-          <p className="sec-sub">Stories, AI tutorials, cartoon blogs and more — all in one place.</p>
+          <p className="sec-sub">Stories, ML tutorials, cartoon blogs and more — all in one place.</p>
         </div>
         <div className="explore-grid">
           {cards.map(c => (

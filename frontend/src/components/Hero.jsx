@@ -18,7 +18,7 @@ function Hero() {
         <div className="hero-left">
           <div className="hero-badge">
             <span className="badge-dot" />
-            <span>AI · Tutorials · Blog ✨</span>
+            <span>ML · Tutorials · Blog ✨</span>
           </div>
 
           <div className="hero-title-row">
@@ -30,7 +30,7 @@ function Hero() {
           </div>
 
           <p className="hero-subtitle">
-            Welcome to <strong>BublikStudios</strong> — where <span className="hl-pink">AI tutorials</span>,{' '}
+            Welcome to <strong>BublikStudios</strong> — where <span className="hl-pink">ML tutorials</span>,{' '}
             <span className="hl-cyan">MLOps guides</span> and{' '}
             <span className="hl-yellow">inner compass writing</span> come together.
             <br /><br />
@@ -38,7 +38,7 @@ function Hero() {
           </p>
 
           <div className="hero-tags">
-            <span className="tag tag-cyan">🤖 MLOps / AI</span>
+            <span className="tag tag-cyan">🤖 MLOps / ML</span>
             <span className="tag tag-pink">🧭 Inner Compass</span>
             <span className="tag tag-yellow">📚 Tutorials</span>
             <span className="tag tag-purple">📖 Blog</span>
