@@ -44,7 +44,7 @@ export default function CartoonBlogPage() {
   // Static teaser card for an upcoming series (shows even before any episode exists in the DB).
   const teaserCard = (
     <article className="cartoon-card">
-      <div className="cc-img-wrap">
+      <div className="cc-img-wrap cc-img-wrap--portrait">
         <img src={calamity} alt="CyberPunk Calamity Jane" className="cc-img" loading="lazy" />
         <div className="cc-img-overlay"><span className="cc-emoji">🤠</span></div>
       </div>
