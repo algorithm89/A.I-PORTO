@@ -34,7 +34,7 @@
   width: 100%;
   max-height: 380px;
   object-fit: cover;
-  object-position: center;
+  object-position: center top;   /* anchor to the top so characters' heads aren't cropped */
   border-radius: 16px;
   border: 1px solid rgba(255,230,0,0.2);
   display: block;
