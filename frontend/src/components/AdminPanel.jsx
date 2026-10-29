@@ -5,6 +5,10 @@ import './AdminPanel.css'
 
 const API = `${import.meta.env.VITE_API_URL}/api/admin`
 
+// Known series — add a line here when a new series launches (keep names in
+// sync with the reader's SERIES_BY_SLUG / COVER_BY_SLUG maps).
+const SERIES_OPTIONS = ['Neon Spirit', 'CyberPunk Calamity Jane']
+
 function AdminPanel({ onClose }) {
   const [tab, setTab] = useState('users') // 'users' | 'episodes' | 'chapters'
 
@@ -23,6 +27,7 @@ function AdminPanel({ onClose }) {
   const [formatting, setFormatting] = useState(false)
   const [saving, setSaving] = useState(false)
   const [preview, setPreview] = useState(false)
+  const [epSeriesFilter, setEpSeriesFilter] = useState('All') // filter the episodes table by series
 
   // ── Chapters state ──
   const [chEpisodeId, setChEpisodeId] = useState('')
@@ -307,6 +312,11 @@ function AdminPanel({ onClose }) {
     } catch (e) { setError(e.message) }
   }
 
+  // Episodes shown in the table, narrowed by the series filter.
+  const visibleEpisodes = epSeriesFilter === 'All'
+    ? episodes
+    : episodes.filter(ep => ep.series === epSeriesFilter)
+
   // ═══════════════════════════════════════════
   //  RENDER
   // ═══════════════════════════════════════════
@@ -391,7 +401,12 @@ function AdminPanel({ onClose }) {
         {tab === 'episodes' && (
           <>
             <div className="ap-stats">
-              <div className="ap-stat"><span className="ap-stat-num">{episodes.length}</span><span className="ap-stat-label">Episodes</span></div>
+              <span className="ap-select-label">Series</span>
+              <select className="ap-select" value={epSeriesFilter} onChange={e => setEpSeriesFilter(e.target.value)}>
+                <option value="All">— All series —</option>
+                {SERIES_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+              <div className="ap-stat"><span className="ap-stat-num">{visibleEpisodes.length}</span><span className="ap-stat-label">Episodes</span></div>
               <button className="ap-refresh" onClick={fetchEpisodes}>⟳ Refresh</button>
               <button className="ap-btn-add" onClick={startNewEpisode}>+ New Episode</button>
             </div>
@@ -404,8 +419,7 @@ function AdminPanel({ onClose }) {
                 <div className="ap-editor-row">
                   <label>Series</label>
                   <select value={epForm.series} onChange={e => setEpForm(p => ({ ...p, series: e.target.value }))}>
-                    <option value="Neon Spirit">Neon Spirit</option>
-                    <option value="CyberPunk Calamity Jane">CyberPunk Calamity Jane</option>
+                    {SERIES_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                   <label>Ep #</label>
                   <input type="number" value={epForm.episodeNumber} onChange={e => setEpForm(p => ({ ...p, episodeNumber: e.target.value }))} style={{ width: 70 }} />
@@ -466,13 +480,17 @@ function AdminPanel({ onClose }) {
             <div className="ap-table-wrap">
               {epLoading ? (
                 <div className="ap-loading"><div className="ap-spinner" /><span>Loading episodes…</span></div>
-              ) : episodes.length === 0 ? (
-                <div className="ap-empty">No episodes yet. Click "+ New Episode" to create one.</div>
+              ) : visibleEpisodes.length === 0 ? (
+                <div className="ap-empty">
+                  {episodes.length === 0
+                    ? 'No episodes yet. Click "+ New Episode" to create one.'
+                    : `No episodes for "${epSeriesFilter}" yet.`}
+                </div>
               ) : (
                 <table className="ap-table">
                   <thead><tr><th>ID</th><th>Series</th><th>Ep</th><th>Title</th><th>Created</th><th>Actions</th></tr></thead>
                   <tbody>
-                    {episodes.map(ep => (
+                    {visibleEpisodes.map(ep => (
                       <tr key={ep.id} className="ap-row">
                         <td className="ap-id">#{ep.id}</td>
                         <td className="ap-username">{ep.series}</td>
