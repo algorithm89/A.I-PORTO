@@ -403,11 +403,10 @@ function AdminPanel({ onClose }) {
 
                 <div className="ap-editor-row">
                   <label>Series</label>
-                  <input list="ap-series-options" value={epForm.series} onChange={e => setEpForm(p => ({ ...p, series: e.target.value }))} />
-                  <datalist id="ap-series-options">
-                    <option value="Neon Spirit" />
-                    <option value="CyberPunk Calamity Jane" />
-                  </datalist>
+                  <select value={epForm.series} onChange={e => setEpForm(p => ({ ...p, series: e.target.value }))}>
+                    <option value="Neon Spirit">Neon Spirit</option>
+                    <option value="CyberPunk Calamity Jane">CyberPunk Calamity Jane</option>
+                  </select>
                   <label>Ep #</label>
                   <input type="number" value={epForm.episodeNumber} onChange={e => setEpForm(p => ({ ...p, episodeNumber: e.target.value }))} style={{ width: 70 }} />
                 </div>
