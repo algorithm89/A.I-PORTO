@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import HexTronGrid from '../components/HexTronGrid'
 import pic10 from '../assets/PIC10.webp'
+import calamity from '../assets/CALAMITY.webp'
 import './NeonSpiritEp1Page.css'
 
 const API = import.meta.env.VITE_API_URL || ''
@@ -11,6 +12,12 @@ const API = import.meta.env.VITE_API_URL || ''
 const SERIES_BY_SLUG = {
   'neon-spirit': 'Neon Spirit',
   'cyberpunk-calamity-jane': 'CyberPunk Calamity Jane',
+}
+
+// Cover image shown at the top of each series' reader page.
+const COVER_BY_SLUG = {
+  'neon-spirit': pic10,
+  'cyberpunk-calamity-jane': calamity,
 }
 
 const ROMAN = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X']
@@ -31,6 +38,7 @@ function getIsAdmin() {
 export default function NeonSpiritEpPage() {
   const { series: seriesSlug = 'neon-spirit', epNum, chNum } = useParams()
   const SERIES = SERIES_BY_SLUG[seriesSlug] || 'Neon Spirit'
+  const cover = COVER_BY_SLUG[seriesSlug] || pic10
   const navigate = useNavigate()
   const ep = parseInt(epNum, 10) || 1
   const ch = parseInt(chNum, 10) || 1
@@ -239,7 +247,7 @@ export default function NeonSpiritEpPage() {
 
       {/* ── Cover image ── */}
       <div className="ns-cover container">
-        <img src={pic10} alt={SERIES} className="ns-cover-img" />
+        <img src={cover} alt={SERIES} className="ns-cover-img" />
       </div>
 
       {/* ── Episode header ── */}
