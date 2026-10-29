@@ -4,6 +4,7 @@ import HexTronGrid from '../components/HexTronGrid'
 import './CartoonBlogPage.css'
 
 import pic10 from '../assets/PIC10.webp'
+import calamity from '../assets/CALAMITY.webp'
 
 const API = import.meta.env.VITE_API_URL || ''
 
@@ -44,7 +45,7 @@ export default function CartoonBlogPage() {
   const teaserCard = (
     <article className="cartoon-card">
       <div className="cc-img-wrap">
-        <img src={pic10} alt="CyberPunk Calamity Jane" className="cc-img" loading="lazy" />
+        <img src={calamity} alt="CyberPunk Calamity Jane" className="cc-img" loading="lazy" />
         <div className="cc-img-overlay"><span className="cc-emoji">🤠</span></div>
       </div>
       <div className="cc-body">
@@ -98,7 +99,6 @@ export default function CartoonBlogPage() {
           </div>
         ) : (
           <div className="cartoon-grid">
-            {teaserCard}
             {episodes.map(ep => {
               const to = `/cartoons/${seriesSlug(ep.series)}/ep/${ep.episodeNumber}/ch/1`
               const date = formatDate(ep.createdAt)
@@ -127,6 +127,7 @@ export default function CartoonBlogPage() {
                 </article>
               )
             })}
+            {teaserCard}
           </div>
         )}
       </section>
