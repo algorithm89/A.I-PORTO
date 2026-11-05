@@ -18,7 +18,7 @@ function Footer() {
             </p>
             <div className="footer-socials">
               <a href="#" className="fsoc fsoc-pink">𝕏 Twitter</a>
-              <a href="#" className="fsoc fsoc-cyan">GitHub</a>
+              <a href="https://github.com/algorithm89/MLOPS-DEVOPS/tree/master/apps/frontend" className="fsoc fsoc-cyan" target="_blank" rel="noopener noreferrer">GitHub</a>
               <a href="https://www.linkedin.com/in/alex-g-a8875773/" className="fsoc fsoc-purple" target="_blank" rel="noopener noreferrer">LinkedIn</a>
             </div>
           </div>
