@@ -19,7 +19,7 @@ function Footer() {
             <div className="footer-socials">
               <a href="#" className="fsoc fsoc-pink">𝕏 Twitter</a>
               <a href="#" className="fsoc fsoc-cyan">GitHub</a>
-              <a href="#" className="fsoc fsoc-purple">LinkedIn</a>
+              <a href="https://www.linkedin.com/in/alex-g-a8875773/" className="fsoc fsoc-purple" target="_blank" rel="noopener noreferrer">LinkedIn</a>
             </div>
           </div>
 
