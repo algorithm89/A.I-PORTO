@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { claudeLink } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import HexTronGrid from '../components/HexTronGrid'
 import './CartoonBlogPage.css'
 
